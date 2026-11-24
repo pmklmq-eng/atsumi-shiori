@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f4e6b">
+<title>あつみ温泉 旅のしおり</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<style>
+  :root {
+    --theme: #1f4e6b;
+    --theme-soft: #e3edf3;
+    --bg: #f6f7f8;
+    --card: #ffffff;
+    --text: #1d2327;
+    --sub: #5b6670;
+    --line: #d9dee2;
+    --warn-bg: #fff4d6;
+    --warn-text: #7a5600;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    font-size: 16px; line-height: 1.6;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  a { color: var(--theme); }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+  /* 表紙 */
+  .cover {
+    background: var(--theme); color: #fff;
+    padding: calc(28px + env(safe-area-inset-top)) 0 28px;
+  }
+  .cover .eyebrow { font-size: 16px; opacity: .85; margin: 0; letter-spacing: .08em; }
+  .cover h1 { font-size: 28px; line-height: 1.35; margin: 6px 0 16px; font-weight: 700; }
+  .cover dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
+  .cover dt { opacity: .75; }
+  .cover dd { margin: 0; }
+
+  section.view { display: none; padding-top: 20px; }
+  section.view.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 12px; }
+
+  /* 日別タブ */
+  .daytabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .daytabs button {
+    flex: 1; min-height: 52px; border: 1px solid var(--line); background: var(--card);
+    border-radius: 12px; font-size: 16px; color: var(--text); font-weight: 600; cursor: pointer;
+  }
+  .daytabs button small { display: block; font-weight: 400; color: var(--sub); font-size: 14px; line-height: 1.2; }
+  .daytabs button[aria-selected="true"] { background: var(--theme); border-color: var(--theme); color: #fff; }
+  .daytabs button[aria-selected="true"] small { color: rgba(255,255,255,.85); }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li { display: grid; grid-template-columns: 58px 1fr; gap: 12px; position: relative; }
+  .timeline .time { font-weight: 700; font-variant-numeric: tabular-nums; padding-top: 14px; color: var(--theme); }
+  .timeline .item {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  .timeline .place { font-weight: 700; font-size: 17px; }
+  .timeline .memo { color: var(--sub); margin: 2px 0 0; }
+  .timeline .map {
+    display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px;
+    font-weight: 600; text-decoration: none;
+  }
+  .timeline li.spare .item { background: #e9ecef; border-color: #d0d5da; }
+  .timeline li.spare .time { color: var(--sub); }
+  .lunchlist li { grid-template-columns: 76px 1fr; }
+  .timeline li.move .time { color: var(--sub); font-weight: 400; }
+  .timeline li.move .item {
+    background: transparent; border: none; border-left: 3px dashed var(--line);
+    border-radius: 0; padding: 4px 0 4px 14px; margin: 0 0 10px 6px; color: var(--sub);
+  }
+  .tag-warn {
+    display: inline-block; background: var(--warn-bg); color: var(--warn-text);
+    border-radius: 6px; padding: 0 6px; font-size: 14px; font-weight: 600; margin-left: 4px;
+  }
+  .note {
+    background: var(--theme-soft); border-radius: 12px; padding: 12px 14px; margin: 6px 0 16px;
+  }
+
+  /* 持ち物 */
+  .checklist { list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+  .checklist li + li { border-top: 1px solid var(--line); }
+  .checklist label { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 14px; cursor: pointer; }
+  .checklist input { width: 24px; height: 24px; accent-color: var(--theme); flex: none; }
+  .checklist input:checked + span { color: var(--sub); text-decoration: line-through; }
+  .group-title { font-size: 16px; color: var(--sub); margin: 18px 0 6px; font-weight: 600; }
+  .progress { color: var(--sub); margin: -4px 0 8px; }
+  .btn-sub {
+    min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--text); font-size: 16px; margin-top: 14px; cursor: pointer;
+  }
+
+  /* メモ */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .field input, .field textarea {
+    width: 100%; font-size: 16px; padding: 12px; min-height: 48px;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text);
+    font-family: inherit;
+  }
+  .field textarea { min-height: 140px; resize: vertical; }
+  .saved { color: var(--sub); min-height: 24px; }
+  .callrow { display: flex; gap: 8px; }
+  .callrow input { flex: 1; }
+  .callrow a {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 64px; min-height: 48px;
+    background: var(--theme); color: #fff; border-radius: 10px; text-decoration: none; font-weight: 600;
+  }
+  .callrow a[aria-disabled="true"] { opacity: .35; pointer-events: none; }
+
+  /* 下部ナビ */
+  nav.bottom {
+    position: fixed; left: 0; right: 0; bottom: 0; background: var(--card);
+    border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 10;
+  }
+  nav.bottom .wrap { display: flex; padding: 0; }
+  nav.bottom button {
+    flex: 1; min-height: 64px; border: none; background: none; font-size: 16px; color: var(--sub);
+    font-weight: 600; cursor: pointer; border-top: 3px solid transparent;
+  }
+  nav.bottom button[aria-selected="true"] { color: var(--theme); border-top-color: var(--theme); }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap">
+    <p class="eyebrow">旅のしおり</p>
+    <h1>あつみ温泉 萬国屋<br>冬の家族旅行</h1>
+    <dl>
+      <dt>日程</dt><dd>2026年12月7日（月）〜8日（火）<span style="white-space:nowrap">1泊2日</span></dd>
+      <dt>行き先</dt><dd>山形県鶴岡市 あつみ温泉</dd>
+      <dt>移動</dt><dd>山形市内から車</dd>
+    </dl>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- 行程 -->
+  <section class="view active" id="view-plan">
+    <div class="daytabs" role="tablist" id="daytabs"></div>
+    <div id="dayinfo"></div>
+    <ol class="timeline" id="timeline"></ol>
+  </section>
+
+  <!-- ランチ -->
+  <section class="view" id="view-lunch">
+    <h2>1日目のランチ</h2>
+    <p class="note">第一候補は道の駅 月山の「大梵字」。臨時休業のときは下の予備へ。</p>
+    <ol class="timeline lunchlist" id="lunchlist"></ol>
+    <h2 style="margin-top:24px">2日目のランチ</h2>
+    <p class="note">第一候補は道の駅あつみ しゃりんの「早磯」。休みのときは帰り道の予備へ。大梵字は火曜定休のため2日目は不可。</p>
+    <ol class="timeline lunchlist" id="lunchlist2"></ol>
+  </section>
+
+  <!-- 持ち物 -->
+  <section class="view" id="view-items">
+    <h2>持ち物チェック</h2>
+    <p class="progress" id="progress"></p>
+    <div id="checklists"></div>
+    <button class="btn-sub" id="reset-items" type="button">チェックをすべて外す</button>
+  </section>
+
+  <!-- メモ・緊急連絡 -->
+  <section class="view" id="view-memo">
+    <h2>メモ・緊急連絡</h2>
+    <div class="field">
+      <label for="m-address">宿の住所</label>
+      <input id="m-address" type="text" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="m-tel">宿の電話番号</label>
+      <div class="callrow">
+        <input id="m-tel" type="tel" inputmode="tel" autocomplete="off">
+        <a id="m-tel-call" href="#" aria-disabled="true">発信</a>
+      </div>
+    </div>
+    <div class="field">
+      <label for="m-reserve">予約番号</label>
+      <input id="m-reserve" type="text" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="m-free">メモ</label>
+      <textarea id="m-free"></textarea>
+    </div>
+    <p class="saved" id="saved" aria-live="polite"></p>
+  </section>
+</main>
+
+<nav class="bottom" aria-label="メニュー">
+  <div class="wrap" role="tablist">
+    <button type="button" data-view="view-plan" aria-selected="true">行程</button>
+    <button type="button" data-view="view-lunch" aria-selected="false">ランチ</button>
+    <button type="button" data-view="view-items" aria-selected="false">持ち物</button>
+    <button type="button" data-view="view-memo" aria-selected="false">メモ</button>
+  </div>
+</nav>
+
+<script>
+(function () {
+  var KEY = 'shiori-atsumi-2026-';
+  function load(k, fallback) {
+    try { var v = localStorage.getItem(KEY + k); return v === null ? fallback : JSON.parse(v); }
+    catch (e) { return fallback; }
+  }
+  function save(k, v) {
+    try { localStorage.setItem(KEY + k, JSON.stringify(v)); return true; }
+    catch (e) { return false; }
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function mapUrl(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
+
+  // ---- 行程データ ----
+  var DAYS = [
+    {
+      date: '2026-12-07', label: 'Day 1', sub: '12/7（月）',
+      note: '12月の月山道路（国道112号）は雪道になります。冬タイヤ必須、出発前に道路情報（山形県・NEXCO東日本）を確認してください。日の入りは16時半ごろです。',
+      items: [
+        { t: '10:30', place: '山形市内 出発' },
+        { move: true, t: '', text: '車　山形道　約25分（冬道の余裕込み 約30分）' },
+        { spare: true, t: '11:00', place: '（予備）休憩：寒河江SA（下り）', q: '寒河江サービスエリア 下り', memo: '高速を降りずに寄れる。売店・フードコートは8:00〜20:00。道の駅にしかわが混んでいるときや、早めに休みたいときに' },
+        { move: true, t: '', text: '車　山形道→月山IC　約15分' },
+        { t: '11:15', place: '休憩：道の駅にしかわ（月山銘水館）', q: '道の駅にしかわ 月山銘水館', memo: '月山道路の雪道に入る前のひと休み。売店は8:30〜18:00' },
+        { move: true, t: '11:30', text: '車　月山IC→月山道路（国道112号）　約20分（冬道の余裕込み 約30分）' },
+        { t: '12:00', place: '道の駅 月山（月山あさひ博物村）', q: '道の駅 月山 月山あさひ博物村', memo: '休憩と昼食。そば処「大梵字」で地元朝日地区のそば粉100%のそば。大梵字は11:00〜16:30ごろ（冬は火曜・第4月曜休み。12/7は第1月曜で営業日）。電話 0235-53-3413。休みのときは下の「ランチ」ページの予備へ' },
+        { move: true, t: '13:30', text: '車　湯殿山IC→山形道→鶴岡IC→国道7号　約30分（冬道の余裕込み 約35分）' },
+        { t: '14:05', place: '休憩：道の駅 庄内みかわ（いろり火の里）', q: '道の駅 庄内みかわ いろり火の里', memo: '鶴岡ICから約10分。物産館は9:00〜17:30ごろ' },
+        { move: true, t: '14:20', text: '車　鶴岡西IC→日本海東北道→あつみ温泉IC　約40分（冬道の余裕込み 約45分）' },
+        { t: '15:05', place: '萬国屋 チェックイン', q: '萬国屋 あつみ温泉', memo: 'チェックインは15:00〜（最終19:00）。写真付き身分証の提示を求められる場合あり' },
+        { t: '16:00', place: '温泉街の足湯めぐり（足湯あんべ湯 など）', q: 'あつみ温泉 足湯あんべ湯', memo: '宿から歩いて行ける範囲。暗く寒くなる前に短めに', warn: '冬季の利用時間' },
+        { t: '18:00', place: '萬国屋 夕食', q: '萬国屋 あつみ温泉', memo: '時刻はチェックイン時に宿と相談', warn: '夕食の時刻' }
+      ]
+    },
+    {
+      date: '2026-12-08', label: 'Day 2', sub: '12/8（火）',
+      note: 'あつみ温泉の朝市は冬季（12〜3月）休業のため、行程に入れていません。',
+      items: [
+        { t: '7:30', place: '萬国屋 朝食', q: '萬国屋 あつみ温泉', memo: '朝湯もおすすめ', warn: '朝食の時刻' },
+        { t: '10:00', place: '萬国屋 チェックアウト', q: '萬国屋 あつみ温泉', memo: 'チェックアウトの10:00まで宿でゆっくり' },
+        { move: true, t: '', text: '車　国道7号　約15分' },
+        { t: '10:15', place: '道の駅あつみ しゃりん', q: '道の駅あつみ しゃりん', memo: '日本海を眺めながらお土産選び。物産館は冬季8:30〜17:30（最終水曜休み、12/8は営業日）' },
+        { t: '11:30', place: '昼食：食堂「早磯」（道の駅あつみ しゃりん）', q: '道の駅あつみ しゃりん 早磯', memo: 'その日の地魚料理・海鮮。7:00〜16:30ごろ。電話 0235-44-3211。休みのときは「ランチ」ページの予備へ' },
+        { move: true, t: '12:30', text: '車　あつみ温泉IC→日本海東北道→鶴岡JCT→山形道→湯殿山IC　約45分（冬道の余裕込み 約50分）' },
+        { t: '13:20', place: '休憩：道の駅 月山（月山あさひ博物村）', q: '道の駅 月山 月山あさひ博物村', memo: '月山道路の雪道に入る前のひと休み。9:00〜17:00（12/8は営業日。大梵字は火曜定休）' },
+        { move: true, t: '13:35', text: '車　月山道路（国道112号）→月山IC→山形道　約40分（冬道の余裕込み 約45分）' },
+        { t: '14:20', place: '休憩：寒河江SA（上り）', q: '寒河江サービスエリア 上り', memo: '売店・フードコートは8:00〜20:00' },
+        { move: true, t: '14:35', text: '車　山形道　約30分（冬道の余裕込み 約35分）' },
+        { t: '15:10', place: '山形市内 到着', memo: 'おつかれさまでした' }
+      ]
+    }
+  ];
+
+  var LUNCH = [
+    { t: '第一候補', place: 'そば処 大梵字（道の駅 月山）', q: 'そば処 大梵字 月山あさひ博物村', memo: '地元朝日地区のそば粉100%のそば。11:00〜16:30ごろ。冬は火曜・第4月曜休み（12/7は営業日）。電話 0235-53-3413' },
+    { spare: true, t: '予備', place: '産直あさひ・グー', q: '産直あさひ・グー 鶴岡', memo: '道の駅 月山から車で数分。食事処で地元の野菜・米の定食、打ちたてそば、ラーメン。食堂は10:30〜14:00（12月は無休、冬は短縮の場合あり）。電話 0235-58-1455' }
+  ];
+  function itemHtml(it) {
+    var link = it.q || (it.place.indexOf('山形市内') === 0 ? null : it.place);
+    return '<li' + (it.spare ? ' class="spare"' : '') + '><div class="time">' + esc(it.t) + '</div><div class="item">' +
+      '<div class="place">' + esc(it.place) + '</div>' +
+      (it.memo ? '<p class="memo">' + esc(it.memo) + '</p>' : '') +
+      (it.warn ? '<p class="memo"><span class="tag-warn">要確認</span> ' + esc(it.warn) + '</p>' : '') +
+      (link ? '<a class="map" href="' + mapUrl(link) + '" target="_blank" rel="noopener">地図を開く ↗</a>' : '') +
+      '</div></li>';
+  }
+  var LUNCH2 = [
+    { t: '第一候補', place: '食堂「早磯」（道の駅あつみ しゃりん）', q: '道の駅あつみ しゃりん 早磯', memo: '日本海の地魚料理・海鮮。7:00〜16:30ごろ。物産館は最終水曜休み（12/8は営業日）。電話 0235-44-3211' },
+    { spare: true, t: '予備', place: '産直あさひ・グー', q: '産直あさひ・グー 鶴岡', memo: '帰り道、月山道路の手前（12:30発で13:20ごろ着、道の駅 月山の休憩と同じタイミング）。定食・そば・ラーメン。食堂は10:30〜14:00（12月は無休、冬は短縮の場合あり）。電話 0235-58-1455' }
+  ];
+  document.getElementById('lunchlist').innerHTML = LUNCH.map(itemHtml).join('');
+  document.getElementById('lunchlist2').innerHTML = LUNCH2.map(itemHtml).join('');
+
+  var tabsEl = document.getElementById('daytabs');
+  var tlEl = document.getElementById('timeline');
+  var infoEl = document.getElementById('dayinfo');
+
+  function renderDay(i) {
+    var d = DAYS[i];
+    Array.prototype.forEach.call(tabsEl.children, function (b, j) { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
+    infoEl.innerHTML = d.note ? '<p class="note">' + esc(d.note) + '</p>' : '';
+    tlEl.innerHTML = d.items.map(function (it) {
+      if (it.move) {
+        return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) + '</div></li>';
+      }
+      return itemHtml(it);
+    }).join('');
+  }
+
+  DAYS.forEach(function (d, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('role', 'tab');
+    b.innerHTML = esc(d.label) + '<small>' + esc(d.sub) + '</small>';
+    b.addEventListener('click', function () { renderDay(i); });
+    tabsEl.appendChild(b);
+  });
+
+  // 旅行期間中なら当日のタブを選ぶ
+  var now = new Date();
+  var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  var startIdx = 0;
+  DAYS.forEach(function (d, i) { if (d.date === today) startIdx = i; });
+  renderDay(startIdx);
+
+  // ---- 持ち物 ----
+  var ITEMS = [
+    { group: '貴重品', list: ['財布・現金', '運転免許証', '健康保険証（4人分）', '写真付き身分証（チェックイン用）', 'スマホ・充電器'] },
+    { group: '防寒・雪道', list: ['厚手の上着', '手袋・帽子・マフラー', '滑りにくい靴（雪道用）', 'カイロ', '車のスノーブラシ・スコップ', '冬タイヤの確認'] },
+    { group: '身の回り', list: ['着替え', '常備薬・お薬手帳', '眼鏡・コンタクト', '保湿クリーム・リップ', 'マスク', 'エコバッグ（お土産用）'] }
+  ];
+  var checks = load('checks', {});
+  var clEl = document.getElementById('checklists');
+  var total = 0;
+  clEl.innerHTML = ITEMS.map(function (g, gi) {
+    return '<p class="group-title">' + esc(g.group) + '</p><ul class="checklist">' +
+      g.list.map(function (name, ii) {
+        total++;
+        var id = 'c' + gi + '-' + ii;
+        return '<li><label><input type="checkbox" data-id="' + id + '"' + (checks[id] ? ' checked' : '') + '><span>' + esc(name) + '</span></label></li>';
+      }).join('') + '</ul>';
+  }).join('');
+  var progEl = document.getElementById('progress');
+  function updateProgress() {
+    var n = clEl.querySelectorAll('input:checked').length;
+    progEl.textContent = n + ' / ' + total + ' 準備OK';
+  }
+  clEl.addEventListener('change', function (e) {
+    var id = e.target.getAttribute('data-id');
+    if (!id) return;
+    if (e.target.checked) checks[id] = true; else delete checks[id];
+    save('checks', checks);
+    updateProgress();
+  });
+  document.getElementById('reset-items').addEventListener('click', function () {
+    if (!confirm('チェックをすべて外しますか？')) return;
+    checks = {}; save('checks', checks);
+    clEl.querySelectorAll('input').forEach(function (i) { i.checked = false; });
+    updateProgress();
+  });
+  updateProgress();
+
+  // ---- メモ ----
+  var MEMO_DEFAULT = { address: '〒999-7204 山形県鶴岡市湯温海丁1（萬国屋）', tel: '0235-43-3333' };
+  var memo = load('memo', {});
+  Object.keys(MEMO_DEFAULT).forEach(function (k) { if (memo[k] === undefined) memo[k] = MEMO_DEFAULT[k]; });
+  var savedEl = document.getElementById('saved');
+  var callEl = document.getElementById('m-tel-call');
+  var timer;
+  function updateCall() {
+    var tel = (memo.tel || '').replace(/[^0-9+]/g, '');
+    if (tel) { callEl.href = 'tel:' + tel; callEl.setAttribute('aria-disabled', 'false'); }
+    else { callEl.href = '#'; callEl.setAttribute('aria-disabled', 'true'); }
+  }
+  [['m-address', 'address'], ['m-tel', 'tel'], ['m-reserve', 'reserve'], ['m-free', 'free']].forEach(function (p) {
+    var el = document.getElementById(p[0]);
+    el.value = memo[p[1]] || '';
+    el.addEventListener('input', function () {
+      memo[p[1]] = el.value;
+      var ok = save('memo', memo);
+      if (p[1] === 'tel') updateCall();
+      clearTimeout(timer);
+      savedEl.textContent = ok ? '保存しました' : 'この端末では保存できませんでした';
+      timer = setTimeout(function () { savedEl.textContent = ''; }, 1500);
+    });
+  });
+  updateCall();
+
+  // ---- 下部ナビ ----
+  var navBtns = document.querySelectorAll('nav.bottom button');
+  navBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      navBtns.forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      document.querySelectorAll('section.view').forEach(function (s) { s.classList.toggle('active', s.id === b.dataset.view); });
+      window.scrollTo(0, 0);
+    });
+  });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('./sw.js').catch(function () {}); });
+  }
+})();
+</script>
+</body>
+</html>
