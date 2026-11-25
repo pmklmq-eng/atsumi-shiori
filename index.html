@@ -172,9 +172,6 @@
     <p class="note">行程には入れていません。時間があれば。</p>
     <ol class="timeline lunchlist" id="nearbylist"></ol>
 
-    <h2 style="margin-top:24px">グルメ</h2>
-    <ol class="timeline lunchlist" id="gourmetlist"></ol>
-
     <h2 style="margin-top:24px">連絡先・メモ</h2>
     <div class="field">
       <label for="m-address">宿の住所</label>
@@ -330,10 +327,6 @@
     { t: '足湯', place: '温泉街の足湯（足湯あんべ湯 など）', q: 'あつみ温泉 足湯あんべ湯', memo: '宿から歩いて行けます。行くなら明るいうちに（日の入り16時半ごろ）', warn: '冬季の利用時間' }
   ];
   document.getElementById('nearbylist').innerHTML = NEARBY.map(itemHtml).join('');
-  var GOURMET = [
-    { t: '寿司', place: '末広寿司', q: '末広寿司 あつみ温泉 湯温海', memo: '温泉街のお寿司屋さん。日曜は昼11:30〜14:00、夜17:00〜24:00。月曜定休なので、12/7（月）は休み。電話 0235-43-3128', warn: '営業時間' }
-  ];
-  document.getElementById('gourmetlist').innerHTML = GOURMET.map(itemHtml).join('');
   var HOTEL = [
     { nomap: true, t: 'お風呂', place: '庭園露天風呂「{桜里の湯|さくらのゆ}」1階', memo: '源泉かけ流し。2023年12月リニューアル。貸切不可' },
     { nomap: true, t: 'お風呂', place: '大浴場「{楽山|らくざん}」「{楽水|らくすい}」3階', memo: '時間帯で男女入れ替え。サウナあり', warn: '入浴時間（目安 5:00〜10:00、11:30〜24:00）' },
