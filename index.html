@@ -86,6 +86,13 @@
     display: inline-block; background: var(--warn-bg); color: var(--warn-text);
     border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
   }
+  .roadlinks { display: grid; gap: 8px; margin: -6px 0 16px; }
+  .roadlinks a {
+    display: block; min-height: 52px; padding: 10px 14px; border-radius: 12px; text-decoration: none;
+    background: var(--card); border: 1px solid var(--theme); color: var(--theme);
+  }
+  .roadlinks a span { display: block; font-weight: 700; }
+  .roadlinks a small { display: block; color: var(--sub); font-size: 15px; line-height: 1.5; }
   .note {
     background: var(--theme-soft); border-radius: 12px; padding: 12px 14px; margin: 6px 0 16px;
   }
@@ -231,7 +238,8 @@
   var DAYS = [
     {
       date: '2026-12-06', label: 'Day 1', sub: '12/6（日）',
-      note: '12月の月山道路（国道112号）は雪道になります。冬タイヤ必須、出発前に道路情報（山形県・NEXCO東日本）を確認してください。日の入りは16時半ごろです。',
+      note: '12月の月山道路（国道112号）は雪道になります。出発前に下の道路情報で通行止め・規制を確認してください。日の入りは16時半ごろです。',
+      roadinfo: true,
       items: [
         { t: '10:20', place: '山形市内 出発' },
         { move: true, t: '', text: '車　山形道　約25分（冬道の余裕込み 約30分）' },
@@ -248,7 +256,8 @@
     },
     {
       date: '2026-12-07', label: 'Day 2', sub: '12/7（月）',
-      note: 'あつみ温泉の朝市は冬季（12〜3月）休業のため、行程に入れていません。',
+      note: '帰りも月山道路を通ります。出発前に下の道路情報を確認してください。あつみ温泉の朝市は冬季（12〜3月）休業のため、行程に入れていません。',
+      roadinfo: true,
       items: [
         { t: '7:30', place: '萬国屋 朝食', q: '萬国屋 あつみ温泉', memo: '朝湯もおすすめ', warn: '朝食の時刻' },
         { t: '10:00', place: '萬国屋 チェックアウト', q: '萬国屋 あつみ温泉', memo: 'チェックアウトの10:00まで宿でゆっくり' },
@@ -286,6 +295,10 @@
   document.getElementById('lunchlist').innerHTML = LUNCH.map(itemHtml).join('');
   document.getElementById('lunchlist2').innerHTML = LUNCH2.map(itemHtml).join('');
 
+  var ROADINFO = [
+    { label: '高速道路の情報 ↗', sub: 'NEXCO東日本「ドラとら」：山形道・日本海東北道の通行止め・渋滞', url: 'https://www.drivetraffic.jp/' },
+    { label: '一般道の情報 ↗', sub: '日本道路交通情報センター：国道112号（月山道路）・国道7号など', url: 'https://www.jartic.or.jp/' }
+  ];
   var tabsEl = document.getElementById('daytabs');
   var tlEl = document.getElementById('timeline');
   var infoEl = document.getElementById('dayinfo');
@@ -293,7 +306,10 @@
   function renderDay(i) {
     var d = DAYS[i];
     Array.prototype.forEach.call(tabsEl.children, function (b, j) { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
-    infoEl.innerHTML = d.note ? '<p class="note">' + esc(d.note) + '</p>' : '';
+    infoEl.innerHTML = (d.note ? '<p class="note">' + esc(d.note) + '</p>' : '') +
+      (d.roadinfo ? '<div class="roadlinks">' + ROADINFO.map(function (r) {
+        return '<a href="' + r.url + '" target="_blank" rel="noopener"><span>' + esc(r.label) + '</span><small>' + esc(r.sub) + '</small></a>';
+      }).join('') + '</div>' : '');
     tlEl.innerHTML = d.items.map(function (it) {
       if (it.move) {
         return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) + '</div></li>';
@@ -320,7 +336,7 @@
   // ---- 持ち物 ----
   var ITEMS = [
     { group: '貴重品', list: ['財布・現金', '運転免許証', '健康保険証（4人分）', '写真付き身分証（チェックイン用）', 'スマホ・充電器'] },
-    { group: '防寒・雪道', list: ['厚手の上着', '手袋・帽子・マフラー', '滑りにくい靴（雪道用）', 'カイロ', '車のスノーブラシ・スコップ', '冬タイヤの確認'] },
+    { group: '防寒・雪道', list: ['厚手の上着', '手袋・帽子・マフラー', '滑りにくい靴（雪道用）', 'カイロ', '車のスノーブラシ・スコップ'] },
     { group: '身の回り', list: ['着替え', '常備薬・お薬手帳', '眼鏡・コンタクト', '保湿クリーム・リップ', 'マスク', 'エコバッグ（お土産用）'] }
   ];
   var checks = load('checks', {});
