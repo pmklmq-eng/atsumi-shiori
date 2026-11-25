@@ -62,8 +62,10 @@
   .daytabs button[aria-selected="true"] small { color: rgba(255,255,255,.92); }
 
   .timeline { list-style: none; margin: 0; padding: 0; }
-  .timeline li { display: grid; grid-template-columns: 62px 1fr; gap: 12px; position: relative; }
-  .timeline .time { font-weight: 700; font-variant-numeric: tabular-nums; padding-top: 14px; color: var(--theme); }
+  /* 時刻・ラベルはカードの上に置き、カードを画面いっぱいに使う */
+  .timeline li { display: block; position: relative; }
+  .timeline .time { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--theme); margin: 0 0 4px 2px; }
+  .timeline .time:empty { display: none; }
   .timeline .item {
     background: var(--card); border: 1px solid var(--line); border-radius: 12px;
     padding: 12px 14px; margin-bottom: 10px;
@@ -76,8 +78,7 @@
   }
   .timeline li.spare .item { background: var(--spare-bg); border-color: var(--spare-line); }
   .timeline li.spare .time { color: var(--sub); }
-  .lunchlist li { grid-template-columns: 80px 1fr; }
-  .timeline li.move .time { color: var(--sub); font-weight: 400; }
+  .timeline li.move .time { color: var(--sub); font-weight: 400; font-size: 15px; margin: 0 0 2px 2px; }
   .timeline li.move .item {
     background: transparent; border: none; border-left: 3px dashed var(--line);
     border-radius: 0; padding: 4px 0 4px 14px; margin: 0 0 10px 6px; color: var(--sub);
