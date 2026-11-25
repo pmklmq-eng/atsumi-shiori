@@ -163,7 +163,10 @@
 
   <!-- 周辺情報 -->
   <section class="view" id="view-nearby">
-    <h2>周辺情報</h2>
+    <h2>萬国屋（ばんこくや）の館内</h2>
+    <p class="note">予約サイトの情報をまとめたものです。最新の内容はチェックイン時の館内案内で確認してください。</p>
+    <ol class="timeline lunchlist" id="hotellist"></ol>
+    <h2 style="margin-top:24px">温泉街</h2>
     <p class="note">行程には入れていません。時間があれば。</p>
     <ol class="timeline lunchlist" id="nearbylist"></ol>
   </section>
@@ -263,7 +266,7 @@
     { spare: true, t: '予備', place: '産直あさひ・グー', q: '産直あさひ・グー 鶴岡', memo: '道の駅 月山から車で数分。食事処で地元の野菜・米の定食、打ちたてそば、ラーメン。食堂は10:30〜14:00（12月は無休、冬は短縮の場合あり）。電話 0235-58-1455' }
   ];
   function itemHtml(it) {
-    var link = it.q || (it.place.indexOf('山形市内') === 0 ? null : it.place);
+    var link = it.nomap ? null : (it.q || (it.place.indexOf('山形市内') === 0 ? null : it.place));
     return '<li' + (it.spare ? ' class="spare"' : '') + '><div class="time">' + esc(it.t) + '</div><div class="item">' +
       '<div class="place">' + esc(it.place) + '</div>' +
       (it.memo ? '<p class="memo">' + esc(it.memo) + '</p>' : '') +
@@ -322,6 +325,13 @@
     { t: '足湯', place: '温泉街の足湯（足湯あんべ湯 など）', q: 'あつみ温泉 足湯あんべ湯', memo: '萬国屋から歩いて行ける範囲。日の入りは16時半ごろなので、行くなら明るいうちに短めに', warn: '冬季の利用時間' }
   ];
   document.getElementById('nearbylist').innerHTML = NEARBY.map(itemHtml).join('');
+  var HOTEL = [
+    { nomap: true, t: 'お風呂', place: '庭園露天風呂「桜里の湯（さくらのゆ）」（1階）', memo: '源泉かけ流し。2023年12月にリニューアル。貸切はできません' },
+    { nomap: true, t: 'お風呂', place: '大浴場「楽山（らくざん）」「楽水（らくすい）」（3階）', memo: '時間帯で男女が入れ替わります。サウナあり。入れる時間の目安は朝5:00〜10:00、昼11:30〜夜24:00ごろ（日中に清掃の時間あり）', warn: '入浴時間' },
+    { nomap: true, t: '食事', place: '和（わ）ダイニング「芙蓉（ふよう）」', memo: '夕食 18:00〜（会場は21:00まで）。朝食 7:30ごろ〜、名物は鯛茶漬け（たいちゃづけ）。プランによっては個室などの会場になります', warn: '会場と時刻' },
+    { nomap: true, t: '館内', place: '売店・喫茶など', memo: '売店、喫茶、夜食コーナー、居酒屋コーナー、カラオケサロン、自動販売機。古い掲載なので、今もあるかは要確認' }
+  ];
+  document.getElementById('hotellist').innerHTML = HOTEL.map(itemHtml).join('');
 
   // ---- メモ ----
   var MEMO_DEFAULT = { address: '〒999-7204 山形県鶴岡市湯温海丁1（萬国屋）', tel: '0235-43-3333' };
