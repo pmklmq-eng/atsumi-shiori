@@ -52,14 +52,6 @@
   h2 { font-size: 21px; margin: 0 0 12px; }
 
   /* 日別タブ */
-  .daytabs { display: flex; gap: 8px; margin-bottom: 16px; }
-  .daytabs button {
-    flex: 1; min-height: 52px; border: 1px solid var(--line); background: var(--card);
-    border-radius: 12px; font-size: 17px; color: var(--text); font-weight: 600; cursor: pointer;
-  }
-  .daytabs button small { display: block; font-weight: 400; color: var(--sub); font-size: 15px; line-height: 1.3; }
-  .daytabs button[aria-selected="true"] { background: var(--theme); border-color: var(--theme); color: #fff; }
-  .daytabs button[aria-selected="true"] small { color: rgba(255,255,255,.92); }
 
   .timeline { list-style: none; margin: 0; padding: 0; }
   /* 時刻・ラベルはカードの上に置き、カードを画面いっぱいに使う */
@@ -148,7 +140,7 @@
 <main class="wrap">
   <!-- 行程 -->
   <section class="view active" id="view-plan">
-    <div class="daytabs" role="tablist" id="daytabs"></div>
+    <h2 id="dayhead"></h2>
     <div id="dayinfo"></div>
     <ol class="timeline" id="timeline"></ol>
   </section>
@@ -201,7 +193,8 @@
 
 <nav class="bottom" aria-label="メニュー">
   <div class="wrap" role="tablist">
-    <button type="button" data-view="view-plan" aria-selected="true">行程</button>
+    <button type="button" data-view="view-plan" data-day="0" aria-selected="true">1日目</button>
+    <button type="button" data-view="view-plan" data-day="1" aria-selected="false">2日目</button>
     <button type="button" data-view="view-gourmet" aria-selected="false">グルメ</button>
     <button type="button" data-view="view-stay" aria-selected="false">宿</button>
   </div>
@@ -296,13 +289,13 @@
     { label: '高速道路の情報 ↗', sub: 'NEXCO東日本「ドラとら」：山形道・日本海東北道の通行止め・渋滞', url: 'https://www.drivetraffic.jp/' },
     { label: '一般道の情報 ↗', sub: '日本道路交通情報センター：国道112号（月山道路）・国道7号など', url: 'https://www.jartic.or.jp/' }
   ];
-  var tabsEl = document.getElementById('daytabs');
+  var headEl = document.getElementById('dayhead');
   var tlEl = document.getElementById('timeline');
   var infoEl = document.getElementById('dayinfo');
 
   function renderDay(i) {
     var d = DAYS[i];
-    Array.prototype.forEach.call(tabsEl.children, function (b, j) { b.setAttribute('aria-selected', j === i ? 'true' : 'false'); });
+    headEl.textContent = (i + 1) + '日目　' + d.sub;
     infoEl.innerHTML = (d.note ? '<p class="note">' + esc(d.note) + '</p>' : '') +
       (d.roadinfo ? '<div class="roadlinks">' + ROADINFO.map(function (r) {
         return '<a href="' + r.url + '" target="_blank" rel="noopener"><span>' + esc(r.label) + '</span><small>' + esc(r.sub) + '</small></a>';
@@ -315,13 +308,6 @@
     }).join('');
   }
 
-  DAYS.forEach(function (d, i) {
-    var b = document.createElement('button');
-    b.type = 'button'; b.setAttribute('role', 'tab');
-    b.innerHTML = esc(d.label) + '<small>' + esc(d.sub) + '</small>';
-    b.addEventListener('click', function () { renderDay(i); });
-    tabsEl.appendChild(b);
-  });
 
   // 旅行期間中なら当日のタブを選ぶ
   var now = new Date();
@@ -329,6 +315,9 @@
   var startIdx = 0;
   DAYS.forEach(function (d, i) { if (d.date === today) startIdx = i; });
   renderDay(startIdx);
+  document.querySelectorAll('nav.bottom button').forEach(function (x) {
+    x.setAttribute('aria-selected', x.dataset.day === String(startIdx) ? 'true' : 'false');
+  });
 
   // ---- 周辺情報 ----
   var NEARBY = [
@@ -375,6 +364,7 @@
   navBtns.forEach(function (b) {
     b.addEventListener('click', function () {
       navBtns.forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      if (b.dataset.day) renderDay(Number(b.dataset.day));
       document.querySelectorAll('section.view').forEach(function (s) { s.classList.toggle('active', s.id === b.dataset.view); });
       window.scrollTo(0, 0);
     });
