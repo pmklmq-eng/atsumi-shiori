@@ -80,6 +80,12 @@
     display: inline-block; background: var(--warn-bg); color: var(--warn-text);
     border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
   }
+  .routebtn {
+    display: block; min-height: 56px; padding: 10px 16px; margin: -4px 0 16px; border-radius: 12px;
+    background: var(--theme); color: #fff; text-decoration: none;
+  }
+  .routebtn span { display: block; font-weight: 700; }
+  .routebtn small { display: block; font-size: 15px; opacity: .92; line-height: 1.5; }
   .roadlinks { display: grid; gap: 8px; margin: -6px 0 16px; }
   .roadlinks a {
     display: block; min-height: 52px; padding: 10px 14px; border-radius: 12px; text-decoration: none;
@@ -141,6 +147,7 @@
   <!-- 行程 -->
   <section class="view active" id="view-plan">
     <h2 id="dayhead"></h2>
+    <a class="routebtn" id="routebtn" target="_blank" rel="noopener"></a>
     <ol class="timeline" id="timeline"></ol>
     <div id="dayinfo" style="margin-top:16px"></div>
   </section>
@@ -220,6 +227,13 @@
   function ruby(h) { return h.replace(/\{([^|{}]+)\|([^{}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>'); }
   // 電話番号を途中で折り返さない
   function nobrTel(h) { return h.replace(/0\d{1,4}-\d{1,4}-\d{3,4}/g, '<span style="white-space:nowrap">$&</span>'); }
+  // 行程順の道順（出発を省くと、押したときのスマホの現在地から）
+  function routeUrl(r) {
+    var u = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=' + encodeURIComponent(r.destination) +
+      '&waypoints=' + encodeURIComponent(r.waypoints.join('|'));
+    if (r.origin) u += '&origin=' + encodeURIComponent(r.origin);
+    return u;
+  }
   function mapUrl(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
 
   // ---- 行程データ ----
@@ -228,6 +242,7 @@
       date: '2026-12-06', label: 'Day 1', sub: '12/6（日）',
       note: '12月の月山道路（国道112号）は雪道になります。出発前に下の道路情報で通行止め・規制を確認してください。通行止めのときは、新庄回り（国道47号）にするか出発を遅らせるかを相談。月山道路に入る前に給油を。日の入りは16時半ごろです。',
       roadinfo: true,
+      route: { waypoints: ['道の駅にしかわ 月山銘水館', '道の駅 月山 月山あさひ博物村'], destination: '萬国屋 あつみ温泉' },
       items: [
         { t: '10:10', place: '山形市内 出発' },
         { move: true, t: '', text: '車　山形道→月山IC　約40分（冬道の余裕込み 約45分）' },
@@ -243,6 +258,7 @@
       date: '2026-12-07', label: 'Day 2', sub: '12/7（月）',
       note: '帰りも月山道路を通ります。出発前に下の道路情報を確認してください。通行止めのときは新庄回り（国道47号）も検討。',
       roadinfo: true,
+      route: { origin: '萬国屋 あつみ温泉', waypoints: ['道の駅あつみ しゃりん', '道の駅 月山 月山あさひ博物村', '寒河江サービスエリア 上り'], destination: '山形市' },
       items: [
         { t: '7:30', place: '萬国屋 朝食', q: '萬国屋 あつみ温泉', memo: '朝湯もおすすめ', warn: '朝食の時刻' },
         { t: '10:00', place: '萬国屋 チェックアウト', q: '萬国屋 あつみ温泉', memo: 'チェックアウトの10:00まで宿でゆっくり' },
@@ -296,6 +312,9 @@
   function renderDay(i) {
     var d = DAYS[i];
     headEl.textContent = (i + 1) + '日目　' + d.sub;
+    var rb = document.getElementById('routebtn');
+    rb.href = routeUrl(d.route);
+    rb.innerHTML = '<span>Google マップで道順を開く ↗</span><small>' + esc((d.route.origin ? '萬国屋' : '現在地') + ' → ' + (i === 0 ? 'にしかわ → 道の駅 月山 → 萬国屋' : 'しゃりん → 道の駅 月山 → 寒河江SA → 山形市')) + '</small>';
     infoEl.innerHTML = (d.note ? '<p class="note">' + esc(d.note) + '</p>' : '') +
       (d.roadinfo ? '<div class="roadlinks">' + ROADINFO.map(function (r) {
         return '<a href="' + r.url + '" target="_blank" rel="noopener"><span>' + esc(r.label) + '</span><small>' + esc(r.sub) + '</small></a>';
