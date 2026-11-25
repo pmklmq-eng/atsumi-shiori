@@ -4,29 +4,33 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1f4e6b">
+<meta name="theme-color" content="#8f2d16">
 <title>あつみ温泉 旅のしおり</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <style>
   :root {
-    --theme: #1f4e6b;
-    --theme-soft: #e3edf3;
-    --bg: #f6f7f8;
-    --card: #ffffff;
-    --text: #1d2327;
-    --sub: #5b6670;
-    --line: #d9dee2;
-    --warn-bg: #fff4d6;
-    --warn-text: #7a5600;
+    /* 紅葉色 */
+    --theme: #8f2d16;      /* 深いもみじ色 */
+    --theme-2: #a8461a;    /* 表紙グラデーションの橙 */
+    --theme-soft: #f8e8dc;
+    --bg: #fbf5ec;         /* 生成り */
+    --card: #fffdf9;
+    --text: #2b1d16;
+    --sub: #5c4537;
+    --line: #e6d5c3;
+    --spare-bg: #f1e7dc;
+    --spare-line: #ddcbb8;
+    --warn-bg: #fde9b8;
+    --warn-text: #6b4300;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0; background: var(--bg); color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
-    font-size: 16px; line-height: 1.6;
+    font-size: 17px; line-height: 1.75;
     padding-bottom: calc(76px + env(safe-area-inset-bottom));
   }
   a { color: var(--theme); }
@@ -34,45 +38,45 @@
 
   /* 表紙 */
   .cover {
-    background: var(--theme); color: #fff;
+    background: linear-gradient(135deg, var(--theme) 0%, var(--theme-2) 100%); color: #fff;
     padding: calc(28px + env(safe-area-inset-top)) 0 28px;
   }
-  .cover .eyebrow { font-size: 16px; opacity: .85; margin: 0; letter-spacing: .08em; }
-  .cover h1 { font-size: 28px; line-height: 1.35; margin: 6px 0 16px; font-weight: 700; }
+  .cover .eyebrow { font-size: 17px; opacity: .92; margin: 0; letter-spacing: .08em; }
+  .cover h1 { font-size: 30px; line-height: 1.35; margin: 6px 0 16px; font-weight: 700; }
   .cover dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
-  .cover dt { opacity: .75; }
+  .cover dt { opacity: .88; }
   .cover dd { margin: 0; }
 
   section.view { display: none; padding-top: 20px; }
   section.view.active { display: block; }
-  h2 { font-size: 20px; margin: 0 0 12px; }
+  h2 { font-size: 21px; margin: 0 0 12px; }
 
   /* 日別タブ */
   .daytabs { display: flex; gap: 8px; margin-bottom: 16px; }
   .daytabs button {
     flex: 1; min-height: 52px; border: 1px solid var(--line); background: var(--card);
-    border-radius: 12px; font-size: 16px; color: var(--text); font-weight: 600; cursor: pointer;
+    border-radius: 12px; font-size: 17px; color: var(--text); font-weight: 600; cursor: pointer;
   }
-  .daytabs button small { display: block; font-weight: 400; color: var(--sub); font-size: 14px; line-height: 1.2; }
+  .daytabs button small { display: block; font-weight: 400; color: var(--sub); font-size: 15px; line-height: 1.3; }
   .daytabs button[aria-selected="true"] { background: var(--theme); border-color: var(--theme); color: #fff; }
-  .daytabs button[aria-selected="true"] small { color: rgba(255,255,255,.85); }
+  .daytabs button[aria-selected="true"] small { color: rgba(255,255,255,.92); }
 
   .timeline { list-style: none; margin: 0; padding: 0; }
-  .timeline li { display: grid; grid-template-columns: 58px 1fr; gap: 12px; position: relative; }
+  .timeline li { display: grid; grid-template-columns: 62px 1fr; gap: 12px; position: relative; }
   .timeline .time { font-weight: 700; font-variant-numeric: tabular-nums; padding-top: 14px; color: var(--theme); }
   .timeline .item {
     background: var(--card); border: 1px solid var(--line); border-radius: 12px;
     padding: 12px 14px; margin-bottom: 10px;
   }
-  .timeline .place { font-weight: 700; font-size: 17px; }
-  .timeline .memo { color: var(--sub); margin: 2px 0 0; }
+  .timeline .place { font-weight: 700; font-size: 18px; line-height: 1.5; }
+  .timeline .memo { color: var(--sub); margin: 4px 0 0; }
   .timeline .map {
     display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px;
     font-weight: 600; text-decoration: none;
   }
-  .timeline li.spare .item { background: #e9ecef; border-color: #d0d5da; }
+  .timeline li.spare .item { background: var(--spare-bg); border-color: var(--spare-line); }
   .timeline li.spare .time { color: var(--sub); }
-  .lunchlist li { grid-template-columns: 76px 1fr; }
+  .lunchlist li { grid-template-columns: 80px 1fr; }
   .timeline li.move .time { color: var(--sub); font-weight: 400; }
   .timeline li.move .item {
     background: transparent; border: none; border-left: 3px dashed var(--line);
@@ -80,7 +84,7 @@
   }
   .tag-warn {
     display: inline-block; background: var(--warn-bg); color: var(--warn-text);
-    border-radius: 6px; padding: 0 6px; font-size: 14px; font-weight: 600; margin-left: 4px;
+    border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
   }
   .note {
     background: var(--theme-soft); border-radius: 12px; padding: 12px 14px; margin: 6px 0 16px;
@@ -92,18 +96,18 @@
   .checklist label { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 14px; cursor: pointer; }
   .checklist input { width: 24px; height: 24px; accent-color: var(--theme); flex: none; }
   .checklist input:checked + span { color: var(--sub); text-decoration: line-through; }
-  .group-title { font-size: 16px; color: var(--sub); margin: 18px 0 6px; font-weight: 600; }
+  .group-title { font-size: 17px; color: var(--sub); margin: 18px 0 6px; font-weight: 600; }
   .progress { color: var(--sub); margin: -4px 0 8px; }
   .btn-sub {
     min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line);
-    background: var(--card); color: var(--text); font-size: 16px; margin-top: 14px; cursor: pointer;
+    background: var(--card); color: var(--text); font-size: 17px; margin-top: 14px; cursor: pointer;
   }
 
   /* メモ */
   .field { margin-bottom: 14px; }
   .field label { display: block; font-weight: 600; margin-bottom: 4px; }
   .field input, .field textarea {
-    width: 100%; font-size: 16px; padding: 12px; min-height: 48px;
+    width: 100%; font-size: 17px; padding: 12px; min-height: 48px;
     border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text);
     font-family: inherit;
   }
@@ -124,7 +128,7 @@
   }
   nav.bottom .wrap { display: flex; padding: 0; }
   nav.bottom button {
-    flex: 1; min-height: 64px; border: none; background: none; font-size: 16px; color: var(--sub);
+    flex: 1; min-height: 64px; border: none; background: none; font-size: 17px; color: var(--sub);
     font-weight: 600; cursor: pointer; border-top: 3px solid transparent;
   }
   nav.bottom button[aria-selected="true"] { color: var(--theme); border-top-color: var(--theme); }
@@ -134,7 +138,7 @@
 
 <header class="cover">
   <div class="wrap">
-    <p class="eyebrow">旅のしおり</p>
+    <p class="eyebrow">🍁 旅のしおり</p>
     <h1>あつみ温泉 萬国屋<br>冬の家族旅行</h1>
     <dl>
       <dt>日程</dt><dd>2026年12月6日（日）〜7日（月）<span style="white-space:nowrap">1泊2日</span></dd>
