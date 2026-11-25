@@ -97,18 +97,6 @@
     background: var(--theme-soft); border-radius: 12px; padding: 12px 14px; margin: 6px 0 16px;
   }
 
-  /* 持ち物 */
-  .checklist { list-style: none; margin: 0; padding: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
-  .checklist li + li { border-top: 1px solid var(--line); }
-  .checklist label { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 14px; cursor: pointer; }
-  .checklist input { width: 24px; height: 24px; accent-color: var(--theme); flex: none; }
-  .checklist input:checked + span { color: var(--sub); text-decoration: line-through; }
-  .group-title { font-size: 17px; color: var(--sub); margin: 18px 0 6px; font-weight: 600; }
-  .progress { color: var(--sub); margin: -4px 0 8px; }
-  .btn-sub {
-    min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line);
-    background: var(--card); color: var(--text); font-size: 17px; margin-top: 14px; cursor: pointer;
-  }
 
   /* メモ */
   .field { margin-bottom: 14px; }
@@ -173,12 +161,11 @@
     <ol class="timeline lunchlist" id="lunchlist2"></ol>
   </section>
 
-  <!-- 持ち物 -->
-  <section class="view" id="view-items">
-    <h2>持ち物チェック</h2>
-    <p class="progress" id="progress"></p>
-    <div id="checklists"></div>
-    <button class="btn-sub" id="reset-items" type="button">チェックをすべて外す</button>
+  <!-- 周辺情報 -->
+  <section class="view" id="view-nearby">
+    <h2>周辺情報</h2>
+    <p class="note">行程には入れていません。時間があれば。</p>
+    <ol class="timeline lunchlist" id="nearbylist"></ol>
   </section>
 
   <!-- メモ・緊急連絡 -->
@@ -211,7 +198,7 @@
   <div class="wrap" role="tablist">
     <button type="button" data-view="view-plan" aria-selected="true">行程</button>
     <button type="button" data-view="view-lunch" aria-selected="false">ランチ</button>
-    <button type="button" data-view="view-items" aria-selected="false">持ち物</button>
+    <button type="button" data-view="view-nearby" aria-selected="false">周辺</button>
     <button type="button" data-view="view-memo" aria-selected="false">メモ</button>
   </div>
 </nav>
@@ -248,7 +235,6 @@
         { t: '12:00', place: '道の駅 月山（月山あさひ博物村）', q: '道の駅 月山 月山あさひ博物村', memo: '休憩と昼食。そば処「大梵字」で地元朝日地区のそば粉100%のそば。大梵字は11:00〜16:30ごろ（冬は火曜・第4月曜休み。12/6は日曜で営業日）。日曜は混みやすいので早めに。電話 0235-53-3413。休みのときは下の「ランチ」ページの予備へ' },
         { move: true, t: '13:30', text: '車　湯殿山IC→山形道→鶴岡IC→一般道で鶴岡西IC→日本海東北道（無料区間）→あつみ温泉IC　約65分（冬道の余裕込み 約75分）。鶴岡JCTは山形道からあつみ方面へ直接つながっていないため、いったん一般道へ' },
         { t: '14:45', place: '萬国屋 到着・チェックイン', q: '萬国屋 あつみ温泉', memo: 'チェックインは15:00〜（最終19:00）。早めに着いたら少し待つ。冬道で遅れても15時台に着ける余裕を見ています。写真付き身分証の提示を求められる場合あり' },
-        { t: '15:45', place: '温泉街の足湯めぐり（足湯あんべ湯 など）', q: 'あつみ温泉 足湯あんべ湯', memo: '宿から歩いて行ける範囲。暗く寒くなる前に短めに', warn: '冬季の利用時間' },
         { t: '18:00', place: '萬国屋 夕食', q: '萬国屋 あつみ温泉', memo: '時刻はチェックイン時に宿と相談', warn: '夕食の時刻' }
       ]
     },
@@ -331,42 +317,11 @@
   DAYS.forEach(function (d, i) { if (d.date === today) startIdx = i; });
   renderDay(startIdx);
 
-  // ---- 持ち物 ----
-  var ITEMS = [
-    { group: '貴重品', list: ['財布・現金', '運転免許証', '健康保険証（4人分）', '写真付き身分証（チェックイン用）', 'スマホ・充電器'] },
-    { group: '防寒・雪道', list: ['厚手の上着', '手袋・帽子・マフラー', '滑りにくい靴（雪道用）', 'カイロ', '車のスノーブラシ・スコップ'] },
-    { group: '身の回り', list: ['着替え', '常備薬・お薬手帳', '眼鏡・コンタクト', '保湿クリーム・リップ', 'マスク', 'エコバッグ（お土産用）'] }
+  // ---- 周辺情報 ----
+  var NEARBY = [
+    { t: '足湯', place: '温泉街の足湯（足湯あんべ湯 など）', q: 'あつみ温泉 足湯あんべ湯', memo: '萬国屋から歩いて行ける範囲。日の入りは16時半ごろなので、行くなら明るいうちに短めに', warn: '冬季の利用時間' }
   ];
-  var checks = load('checks', {});
-  var clEl = document.getElementById('checklists');
-  var total = 0;
-  clEl.innerHTML = ITEMS.map(function (g, gi) {
-    return '<p class="group-title">' + esc(g.group) + '</p><ul class="checklist">' +
-      g.list.map(function (name, ii) {
-        total++;
-        var id = 'c' + gi + '-' + ii;
-        return '<li><label><input type="checkbox" data-id="' + id + '"' + (checks[id] ? ' checked' : '') + '><span>' + esc(name) + '</span></label></li>';
-      }).join('') + '</ul>';
-  }).join('');
-  var progEl = document.getElementById('progress');
-  function updateProgress() {
-    var n = clEl.querySelectorAll('input:checked').length;
-    progEl.textContent = n + ' / ' + total + ' 準備OK';
-  }
-  clEl.addEventListener('change', function (e) {
-    var id = e.target.getAttribute('data-id');
-    if (!id) return;
-    if (e.target.checked) checks[id] = true; else delete checks[id];
-    save('checks', checks);
-    updateProgress();
-  });
-  document.getElementById('reset-items').addEventListener('click', function () {
-    if (!confirm('チェックをすべて外しますか？')) return;
-    checks = {}; save('checks', checks);
-    clEl.querySelectorAll('input').forEach(function (i) { i.checked = false; });
-    updateProgress();
-  });
-  updateProgress();
+  document.getElementById('nearbylist').innerHTML = NEARBY.map(itemHtml).join('');
 
   // ---- メモ ----
   var MEMO_DEFAULT = { address: '〒999-7204 山形県鶴岡市湯温海丁1（萬国屋）', tel: '0235-43-3333' };
