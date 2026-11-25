@@ -1,4 +1,4 @@
-const CACHE = 'shiori-atsumi-2026-v2';
+const CACHE = 'shiori-atsumi-2026-v3';
 const FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
