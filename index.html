@@ -314,7 +314,7 @@
     headEl.textContent = (i + 1) + '日目　' + d.sub;
     var rb = document.getElementById('routebtn');
     rb.href = routeUrl(d.route);
-    rb.innerHTML = '<span>Google マップで道順を開く ↗</span><small>' + esc((d.route.origin ? '萬国屋' : '現在地') + ' → ' + (i === 0 ? 'にしかわ → 道の駅 月山 → 萬国屋' : 'しゃりん → 道の駅 月山 → 寒河江SA → 江南春')) + '</small>';
+    rb.innerHTML = '<span>Google マップで道順を開く ↗</span><small>' + esc((d.route.origin ? '萬国屋' : '現在地') + ' → ' + (i === 0 ? 'にしかわ → 道の駅 月山 → 萬国屋' : 'しゃりん → 道の駅 月山 → 寒河江SA → 江南春（目印）')) + '</small>';
     infoEl.innerHTML = (d.note ? '<p class="note">' + esc(d.note) + '</p>' : '') +
       (d.roadinfo ? '<div class="roadlinks">' + ROADINFO.map(function (r) {
         return '<a href="' + r.url + '" target="_blank" rel="noopener"><span>' + esc(r.label) + '</span><small>' + esc(r.sub) + '</small></a>';
