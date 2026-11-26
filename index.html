@@ -86,13 +86,6 @@
   }
   .routebtn span { display: block; font-weight: 700; }
   .routebtn small { display: block; font-size: 15px; opacity: .92; line-height: 1.5; }
-  .roadlinks { display: grid; gap: 8px; margin: -6px 0 16px; }
-  .roadlinks a {
-    display: block; min-height: 52px; padding: 10px 14px; border-radius: 12px; text-decoration: none;
-    background: var(--card); border: 1px solid var(--theme); color: var(--theme);
-  }
-  .roadlinks a span { display: block; font-weight: 700; }
-  .roadlinks a small { display: block; color: var(--sub); font-size: 15px; line-height: 1.5; }
   .note {
     background: var(--theme-soft); border-radius: 12px; padding: 12px 14px; margin: 6px 0 16px;
   }
@@ -241,8 +234,7 @@
   var DAYS = [
     {
       date: '2026-12-06', label: 'Day 1', sub: '12/6（日）',
-      note: '月山道路（国道112号）は雪道。出発前に下の道路情報を確認。通行止めなら新庄回り（国道47号）か、出発を遅らせる。月山道路の前に給油を。日の入りは16:30ごろ。',
-      roadinfo: true,
+      note: '月山道路（国道112号）は雪道。出発前に道路情報を確認。通行止めなら新庄回り（国道47号）か、出発を遅らせる。月山道路の前に給油を。日の入りは16:30ごろ。',
       route: { waypoints: ['山菜料理 出羽屋 西川町', '道の駅 月山 月山あさひ博物村'], destination: '萬国屋 あつみ温泉' },
       items: [
         { t: '10:10', place: '山形市内 出発' },
@@ -257,8 +249,7 @@
     },
     {
       date: '2026-12-07', label: 'Day 2', sub: '12/7（月）',
-      note: '帰りも月山道路。出発前に下の道路情報を確認。通行止めなら新庄回り（国道47号）も。',
-      roadinfo: true,
+      note: '帰りも月山道路。出発前に道路情報を確認。通行止めなら新庄回り（国道47号）も。',
       route: { origin: '萬国屋 あつみ温泉', waypoints: ['道の駅あつみ しゃりん', '道の駅 月山 月山あさひ博物村', '道の駅にしかわ 月山銘水館'], destination: '江南春 山形市' },
       items: [
         { t: '7:30', place: '萬国屋 朝食', nomap: true, memo: '朝湯もおすすめ', warn: '時刻' },
@@ -303,9 +294,6 @@
   ];
   document.getElementById('sushilist').innerHTML = SUSHI.map(itemHtml).join('');
 
-  var ROADINFO = [
-    { label: '一般道の情報 ↗', sub: '日本道路交通情報センター：国道112号・7号', url: 'https://www.jartic.or.jp/' }
-  ];
   var headEl = document.getElementById('dayhead');
   var tlEl = document.getElementById('timeline');
   var infoEl = document.getElementById('dayinfo');
@@ -316,10 +304,7 @@
     var rb = document.getElementById('routebtn');
     rb.href = routeUrl(d.route);
     rb.innerHTML = '<span>Google マップで道順を開く ↗</span><small>' + esc((d.route.origin ? '萬国屋' : '現在地') + ' → ' + (i === 0 ? '出羽屋 → 道の駅 月山 → 萬国屋' : 'しゃりん → 道の駅 月山 → にしかわ → 江南春（目印）')) + '</small><small>経路オプションで「高速道路を使わない」をオンに</small>';
-    infoEl.innerHTML = (d.note ? '<p class="note">' + esc(d.note) + '</p>' : '') +
-      (d.roadinfo ? '<div class="roadlinks">' + ROADINFO.map(function (r) {
-        return '<a href="' + r.url + '" target="_blank" rel="noopener"><span>' + esc(r.label) + '</span><small>' + esc(r.sub) + '</small></a>';
-      }).join('') + '</div>' : '');
+    infoEl.innerHTML = d.note ? '<p class="note">' + esc(d.note) + '</p>' : '';
     tlEl.innerHTML = d.items.map(function (it) {
       if (it.move) {
         return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) + '</div></li>';
