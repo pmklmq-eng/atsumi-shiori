@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8f2d16">
+<title>あつみ温泉 旅のしおり（予備）</title>
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<style>
+  :root {
+    /* 紅葉色 */
+    --theme: #8f2d16;      /* 深いもみじ色 */
+    --theme-2: #a8461a;    /* 表紙グラデーションの橙 */
+    --theme-soft: #f8e8dc;
+    --bg: #fbf5ec;         /* 生成り */
+    --card: #fffdf9;
+    --text: #2b1d16;
+    --sub: #5c4537;
+    --line: #e6d5c3;
+    --spare-bg: #f1e7dc;
+    --spare-line: #ddcbb8;
+    --warn-bg: #fde9b8;
+    --warn-text: #6b4300;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    font-size: 17px; line-height: 1.75;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  a { color: var(--theme); }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+  /* 表紙 */
+  .cover {
+    background: linear-gradient(135deg, var(--theme) 0%, var(--theme-2) 100%); color: #fff;
+    padding: calc(28px + env(safe-area-inset-top)) 0 28px;
+  }
+  .cover .eyebrow { font-size: 17px; opacity: .92; margin: 0; letter-spacing: .08em; }
+  .cover h1 { font-size: 30px; line-height: 1.35; margin: 6px 0 16px; font-weight: 700; }
+  .cover dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
+  .cover dt { opacity: .88; }
+  .cover dd { margin: 0; }
+
+  section.view { display: none; padding-top: 20px; }
+  section.view.active { display: block; }
+  h2 { font-size: 21px; margin: 0 0 12px; }
+
+  /* 日別タブ */
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  /* 時刻・ラベルはカードの上に置き、カードを画面いっぱいに使う */
+  .timeline li { display: block; position: relative; }
+  .timeline .time { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--theme); margin: 0 0 4px 2px; }
+  .timeline .time:empty { display: none; }
+  .timeline .item {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  .timeline .place { font-weight: 700; font-size: 18px; line-height: 1.5; }
+  .timeline .place rt { font-size: 12px; font-weight: 600; color: var(--sub); }
+  .timeline .memo { color: var(--sub); margin: 4px 0 0; }
+  .timeline .map {
+    display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px;
+    font-weight: 600; text-decoration: none;
+  }
+  .timeline li.spare .item { background: var(--spare-bg); border-color: var(--spare-line); }
+  .timeline li.spare .time { color: var(--sub); }
+  .timeline li.move .time { color: var(--sub); font-weight: 400; font-size: 15px; margin: 0 0 2px 2px; }
+  .timeline li.move .item {
+    background: transparent; border: none; border-left: 3px dashed var(--line);
+    border-radius: 0; padding: 4px 0 4px 14px; margin: 0 0 10px 6px; color: var(--sub);
+  }
+  .tag-warn {
+    display: inline-block; background: var(--warn-bg); color: var(--warn-text);
+    border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
+  }
+  .routebtn {
+    display: block; min-height: 56px; padding: 10px 16px; margin: -4px 0 16px; border-radius: 12px;
+    background: var(--theme); color: #fff; text-decoration: none;
+  }
+  .routebtn span { display: block; font-weight: 700; }
+  .routebtn small { display: block; font-size: 15px; opacity: .92; line-height: 1.5; }
+  .roadlinks { display: grid; gap: 8px; margin: -6px 0 16px; }
+  .roadlinks a {
+    display: block; min-height: 52px; padding: 10px 14px; border-radius: 12px; text-decoration: none;
+    background: var(--card); border: 1px solid var(--theme); color: var(--theme);
+  }
+  .roadlinks a span { display: block; font-weight: 700; }
+  .roadlinks a small { display: block; color: var(--sub); font-size: 15px; line-height: 1.5; }
+  .note {
+    background: var(--theme-soft); border-radius: 12px; padding: 12px 14px; margin: 6px 0 16px;
+  }
+
+
+  /* メモ */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .field input, .field textarea {
+    width: 100%; font-size: 17px; padding: 12px; min-height: 48px;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text);
+    font-family: inherit;
+  }
+  .field textarea { min-height: 140px; resize: vertical; }
+  .saved { color: var(--sub); min-height: 24px; }
+  .callrow { display: flex; gap: 8px; }
+  .callrow input { flex: 1; }
+  .callrow a {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 64px; min-height: 48px;
+    background: var(--theme); color: #fff; border-radius: 10px; text-decoration: none; font-weight: 600;
+  }
+  .callrow a[aria-disabled="true"] { opacity: .35; pointer-events: none; }
+
+  /* 下部ナビ */
+  nav.bottom {
+    position: fixed; left: 0; right: 0; bottom: 0; background: var(--card);
+    border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 10;
+  }
+  nav.bottom .wrap { display: flex; padding: 0; }
+  nav.bottom button {
+    flex: 1; min-height: 64px; border: none; background: none; font-size: 17px; color: var(--sub);
+    font-weight: 600; cursor: pointer; border-top: 3px solid transparent;
+  }
+  nav.bottom button[aria-selected="true"] { color: var(--theme); border-top-color: var(--theme); }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap">
+    <p class="eyebrow">🍁 旅のしおり（予備・11/26時点のコピー）</p>
+    <h1>あつみ温泉 萬国屋<br>冬の家族旅行</h1>
+    <dl>
+      <dt>日程</dt><dd>2026年12月6日（日）〜7日（月）<span style="white-space:nowrap">1泊2日</span></dd>
+      <dt>行き先</dt><dd>山形県鶴岡市 あつみ温泉</dd>
+      <dt>移動</dt><dd>山形市内から車</dd>
+    </dl>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- 行程 -->
+  <section class="view active" id="view-plan">
+    <h2 id="dayhead"></h2>
+    <a class="routebtn" id="routebtn" target="_blank" rel="noopener"></a>
+    <ol class="timeline" id="timeline"></ol>
+    <div id="dayinfo" style="margin-top:16px"></div>
+  </section>
+
+  <!-- グルメ -->
+  <section class="view" id="view-gourmet">
+    <h2>1日目のお昼</h2>
+    <p class="note">第一候補は道の駅 月山の「大梵字」。臨時休業のときは下の予備へ。</p>
+    <ol class="timeline lunchlist" id="lunchlist"></ol>
+    <h2 style="margin-top:24px">2日目のお昼</h2>
+    <p class="note">第一候補は道の駅あつみ しゃりんの「早磯」。休みのときは帰り道の予備へ。2日目（月曜）は大梵字も営業日なので、予備にできます。</p>
+    <ol class="timeline lunchlist" id="lunchlist2"></ol>
+    <h2 style="margin-top:24px">2日目 お寿司にするなら（鶴岡）</h2>
+    <p class="note">どちらも月曜営業で、帰り道の鶴岡（鶴岡西IC〜鶴岡ICの一般道）の近く。しゃりんを11:30ごろ出て、鶴岡で12:00〜13:00。</p>
+    <ol class="timeline lunchlist" id="sushilist"></ol>
+    <h2 style="margin-top:24px">月山山菜そば（西川町）</h2>
+    <p class="note">行きも帰りも通る西川町の名物。道の駅にしかわ（月山IC）のあたり。</p>
+    <ol class="timeline lunchlist" id="sansailist"></ol>
+  </section>
+
+  <!-- 宿 -->
+  <section class="view" id="view-stay">
+    <h2>萬国屋の館内</h2>
+    <p class="note">予約サイトの情報です。最新はチェックイン時の館内案内で確認を。</p>
+    <ol class="timeline lunchlist" id="hotellist"></ol>
+    <h2 style="margin-top:24px">温泉街</h2>
+    <p class="note">行程には入れていません。時間があれば。</p>
+    <ol class="timeline lunchlist" id="nearbylist"></ol>
+
+    <h2 style="margin-top:24px">連絡先・メモ</h2>
+    <div class="field">
+      <label for="m-address">宿の住所</label>
+      <input id="m-address" type="text" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="m-tel">宿の電話番号</label>
+      <div class="callrow">
+        <input id="m-tel" type="tel" inputmode="tel" autocomplete="off">
+        <a id="m-tel-call" href="#" aria-disabled="true">発信</a>
+      </div>
+    </div>
+    <div class="field">
+      <label for="m-reserve">予約番号</label>
+      <input id="m-reserve" type="text" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="m-free">メモ</label>
+      <textarea id="m-free"></textarea>
+    </div>
+    <p class="saved" id="saved" aria-live="polite"></p>
+  </section>
+</main>
+
+<nav class="bottom" aria-label="メニュー">
+  <div class="wrap" role="tablist">
+    <button type="button" data-view="view-plan" data-day="0" aria-selected="true">1日目</button>
+    <button type="button" data-view="view-plan" data-day="1" aria-selected="false">2日目</button>
+    <button type="button" data-view="view-gourmet" aria-selected="false">グルメ</button>
+    <button type="button" data-view="view-stay" aria-selected="false">宿</button>
+  </div>
+</nav>
+
+<script>
+(function () {
+  var KEY = 'shiori-atsumi-2026-';
+  function load(k, fallback) {
+    try { var v = localStorage.getItem(KEY + k); return v === null ? fallback : JSON.parse(v); }
+    catch (e) { return fallback; }
+  }
+  function save(k, v) {
+    try { localStorage.setItem(KEY + k, JSON.stringify(v)); return true; }
+    catch (e) { return false; }
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  // {漢字|かな} をふりがな（ルビ）にする
+  function ruby(h) { return h.replace(/\{([^|{}]+)\|([^{}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>'); }
+  // 電話番号を途中で折り返さない
+  function nobrTel(h) { return h.replace(/0\d{1,4}-\d{1,4}-\d{3,4}/g, '<span style="white-space:nowrap">$&</span>'); }
+  // 行程順の道順（出発を省くと、押したときのスマホの現在地から）
+  function routeUrl(r) {
+    var u = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=' + encodeURIComponent(r.destination) +
+      '&waypoints=' + encodeURIComponent(r.waypoints.join('|'));
+    if (r.origin) u += '&origin=' + encodeURIComponent(r.origin);
+    return u;
+  }
+  function mapUrl(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
+
+  // ---- 行程データ ----
+  var DAYS = [
+    {
+      date: '2026-12-06', label: 'Day 1', sub: '12/6（日）',
+      note: '12月の月山道路（国道112号）は雪道になります。出発前に下の道路情報で通行止め・規制を確認してください。通行止めのときは、新庄回り（国道47号）にするか出発を遅らせるかを相談。月山道路に入る前に給油を。日の入りは16時半ごろです。',
+      roadinfo: true,
+      route: { waypoints: ['道の駅にしかわ 月山銘水館', '道の駅 月山 月山あさひ博物村'], destination: '萬国屋 あつみ温泉' },
+      items: [
+        { t: '10:10', place: '山形市内 出発' },
+        { move: true, t: '', text: '車　山形道→月山IC　約40分（冬道の余裕込み 約45分）' },
+        { t: '10:55', place: '休憩：道の駅にしかわ（月山銘水館）', q: '道の駅にしかわ 月山銘水館', memo: '月山道路の雪道に入る前のひと休み。売店は8:30〜18:00' },
+        { move: true, t: '11:10', text: '車　月山IC→月山道路（国道112号）　約30km・約40分（冬道の余裕込み 約50分）' },
+        { t: '12:00', place: '道の駅 月山（月山あさひ博物村）', q: '道の駅 月山 月山あさひ博物村', memo: '休憩と昼食。そば処「大梵字」で地元朝日地区のそば粉100%のそば。大梵字は11:00〜16:30ごろ（冬は火曜・第4月曜休み。12/6は日曜で営業日）。日曜は混みやすいので早めに。電話 0235-53-3413。休みのときは下の「グルメ」ページの予備へ' },
+        { move: true, t: '13:30', text: '車　湯殿山IC→山形道→鶴岡IC→一般道で鶴岡西IC→日本海東北道（無料区間）→あつみ温泉IC　約65分（冬道の余裕込み 約75分）。鶴岡JCTは山形道からあつみ方面へ直接つながっていないため、いったん一般道へ' },
+        { t: '14:45', place: '萬国屋 到着・チェックイン', q: '萬国屋 あつみ温泉', memo: 'チェックインは15:00〜（最終19:00）。早めに着いたら少し待つ。冬道で遅れても15時台に着ける余裕を見ています。写真付き身分証の提示を求められる場合あり' },
+        { t: '18:00', place: '萬国屋 夕食', q: '萬国屋 あつみ温泉', memo: '時刻はチェックイン時に宿と相談', warn: '夕食の時刻' }
+      ]
+    },
+    {
+      date: '2026-12-07', label: 'Day 2', sub: '12/7（月）',
+      note: '帰りも月山道路を通ります。出発前に下の道路情報を確認してください。通行止めのときは新庄回り（国道47号）も検討。',
+      roadinfo: true,
+      route: { origin: '萬国屋 あつみ温泉', waypoints: ['道の駅あつみ しゃりん', '道の駅 月山 月山あさひ博物村', '寒河江サービスエリア 上り'], destination: '江南春 山形市' },
+      items: [
+        { t: '7:30', place: '萬国屋 朝食', q: '萬国屋 あつみ温泉', memo: '朝湯もおすすめ', warn: '朝食の時刻' },
+        { t: '10:00', place: '萬国屋 チェックアウト', q: '萬国屋 あつみ温泉', memo: 'チェックアウトの10:00まで宿でゆっくり' },
+        { move: true, t: '', text: '車　国道7号　約15分' },
+        { t: '10:15', place: '道の駅あつみ しゃりん', q: '道の駅あつみ しゃりん', memo: '日本海を眺めながらお土産選び。物産館は冬季8:30〜17:30（最終水曜休み、12/7は営業日）' },
+        { t: '11:30', place: '昼食：食堂「早磯」（道の駅あつみ しゃりん）', q: '道の駅あつみ しゃりん 早磯', memo: 'その日の地魚料理・海鮮。7:00〜16:30ごろ。電話 0235-44-3211。休みのときは「グルメ」ページの予備へ' },
+        { move: true, t: '12:30', text: '車　日本海東北道（無料区間）→鶴岡西IC→一般道で鶴岡IC→山形道→湯殿山IC　約55分（冬道の余裕込み 約65分）。鶴岡JCTはあつみ方面から山形方面へ直接つながっていないため、いったん一般道へ' },
+        { t: '13:35', place: '休憩：道の駅 月山（月山あさひ博物村）', q: '道の駅 月山 月山あさひ博物村', memo: '月山道路の雪道に入る前のひと休み。9:00〜17:00（12/7は第1月曜で営業日）。早磯が休みだったときは、ここの大梵字で遅めの昼食も' },
+        { move: true, t: '13:50', text: '車　月山道路（国道112号）→月山IC→山形道　約65分（冬道の余裕込み 約75分）' },
+        { t: '15:05', place: '休憩：寒河江SA（上り）', q: '寒河江サービスエリア 上り', memo: '売店・フードコートは8:00〜20:00' },
+        { move: true, t: '15:20', text: '車　山形道　約30分（冬道の余裕込み 約35分）' },
+        { t: '15:55', place: '山形市内 到着', memo: 'おつかれさまでした。月山道路は暗くなる前（16時半ごろ）に抜けられます' }
+      ]
+    }
+  ];
+
+  var LUNCH = [
+    { t: '第一候補', place: 'そば処 大梵字（道の駅 月山）', q: 'そば処 大梵字 月山あさひ博物村', memo: '地元朝日地区のそば粉100%のそば。11:00〜16:30ごろ。冬は火曜・第4月曜休み（12/6は営業日）。電話 0235-53-3413' },
+    { spare: true, t: '予備', place: '産直あさひ・グー', q: '産直あさひ・グー 鶴岡', memo: '道の駅 月山から車で数分。食事処で地元の野菜・米の定食、打ちたてそば、ラーメン。食堂は10:30〜14:00（12月は無休、冬は短縮の場合あり）。電話 0235-58-1455' }
+  ];
+  function itemHtml(it) {
+    var link = it.nomap ? null : (it.q || (it.place.indexOf('山形市内') === 0 ? null : it.place));
+    return '<li' + (it.spare ? ' class="spare"' : '') + '><div class="time">' + esc(it.t) + '</div><div class="item">' +
+      '<div class="place">' + ruby(esc(it.place)) + '</div>' +
+      (it.memo ? '<p class="memo">' + nobrTel(esc(it.memo)) + '</p>' : '') +
+      (it.warn ? '<p class="memo"><span class="tag-warn">要確認</span> ' + esc(it.warn) + '</p>' : '') +
+      (link ? '<a class="map" href="' + mapUrl(link) + '" target="_blank" rel="noopener">地図を開く ↗</a>' : '') +
+      '</div></li>';
+  }
+  var LUNCH2 = [
+    { t: '第一候補', place: '食堂「早磯」（道の駅あつみ しゃりん）', q: '道の駅あつみ しゃりん 早磯', memo: '日本海の地魚料理・海鮮。7:00〜16:30ごろ。物産館は最終水曜休み（12/7は営業日）。電話 0235-44-3211' },
+    { spare: true, t: '予備', place: 'そば処 大梵字（道の駅 月山）', q: 'そば処 大梵字 月山あさひ博物村', memo: '帰り道の休憩（13:35ごろ着）でそのまま食べられる。11:00〜16:30ごろ。12/7は第1月曜で営業日（冬は火曜・第4月曜休み）。電話 0235-53-3413' },
+    { spare: true, t: '予備', place: '産直あさひ・グー', q: '産直あさひ・グー 鶴岡', memo: '帰り道、道の駅 月山の近く。食堂は14:00までなので、早磯が休みのときは しゃりんを12:00ごろに出発（13:05ごろ着）。定食・そば・ラーメン。食堂は10:30〜14:00（12月は無休、冬は短縮の場合あり）。電話 0235-58-1455' }
+  ];
+  document.getElementById('lunchlist').innerHTML = LUNCH.map(itemHtml).join('');
+  document.getElementById('lunchlist2').innerHTML = LUNCH2.map(itemHtml).join('');
+  var SUSHI = [
+    { t: '寿司', place: '安兵衛寿し（鶴岡市本町）', q: '安兵衛寿し 鶴岡', memo: '鶴岡の中心部。昼11:30〜14:00（ラストオーダー13:30）。ランチは丼・御膳で950〜2,200円ほど、花御膳が人気。水曜休み（月曜は営業）。電話 0235-24-5806' },
+    { t: '回転寿司', place: '金太郎寿し 新斎店（鶴岡市西新斎町）', q: '金太郎寿し 新斎店 鶴岡', memo: 'ネタが大きいと評判の地元の回転寿司。平日の昼11:00〜14:00。ほぼ無休（水曜休みの情報も）。電話 0235-25-4441' }
+  ];
+  document.getElementById('sushilist').innerHTML = SUSHI.map(itemHtml).join('');
+  var SANSAI = [
+    { t: '山菜そば', place: '道の駅にしかわ 銘水館レストラン', q: '道の駅にしかわ 月山銘水館', memo: '行程で寄る道の駅の中なので移動0分。1日目は10:55ごろ、2日目は14:45ごろ着。9:00〜17:00（ラストオーダー15:00）、休みは年末年始だけ。冬はなめこ・ひらたけ・まいたけ入り', warn: '1日15食限定。2日目はラストオーダーぎりぎり' },
+    { t: '山菜そば', place: '山菜料理 出羽屋（西川町間沢）', q: '山菜料理 出羽屋 西川町', memo: '「月山山菜そば」発祥の店。鉄鍋仕立て1,600円。西川ICから車で約5分（道の駅にしかわから5〜10分の見込み）。11:30〜、火曜休み（12/6・12/7は営業）。電話 0237-74-2323', warn: '閉店時刻（14:00と19:00の情報あり）' }
+  ];
+  document.getElementById('sansailist').innerHTML = SANSAI.map(itemHtml).join('');
+
+  var ROADINFO = [
+    { label: '高速道路の情報 ↗', sub: 'NEXCO東日本「ドラとら」：山形道・日本海東北道の通行止め・渋滞', url: 'https://www.drivetraffic.jp/' },
+    { label: '一般道の情報 ↗', sub: '日本道路交通情報センター：国道112号（月山道路）・国道7号など', url: 'https://www.jartic.or.jp/' }
+  ];
+  var headEl = document.getElementById('dayhead');
+  var tlEl = document.getElementById('timeline');
+  var infoEl = document.getElementById('dayinfo');
+
+  function renderDay(i) {
+    var d = DAYS[i];
+    headEl.textContent = (i + 1) + '日目　' + d.sub;
+    var rb = document.getElementById('routebtn');
+    rb.href = routeUrl(d.route);
+    rb.innerHTML = '<span>Google マップで道順を開く ↗</span><small>' + esc((d.route.origin ? '萬国屋' : '現在地') + ' → ' + (i === 0 ? 'にしかわ → 道の駅 月山 → 萬国屋' : 'しゃりん → 道の駅 月山 → 寒河江SA → 江南春（目印）')) + '</small>';
+    infoEl.innerHTML = (d.note ? '<p class="note">' + esc(d.note) + '</p>' : '') +
+      (d.roadinfo ? '<div class="roadlinks">' + ROADINFO.map(function (r) {
+        return '<a href="' + r.url + '" target="_blank" rel="noopener"><span>' + esc(r.label) + '</span><small>' + esc(r.sub) + '</small></a>';
+      }).join('') + '</div>' : '');
+    tlEl.innerHTML = d.items.map(function (it) {
+      if (it.move) {
+        return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) + '</div></li>';
+      }
+      return itemHtml(it);
+    }).join('');
+  }
+
+
+  // 旅行期間中なら当日のタブを選ぶ
+  var now = new Date();
+  var today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  var startIdx = 0;
+  DAYS.forEach(function (d, i) { if (d.date === today) startIdx = i; });
+  renderDay(startIdx);
+  document.querySelectorAll('nav.bottom button').forEach(function (x) {
+    x.setAttribute('aria-selected', x.dataset.day === String(startIdx) ? 'true' : 'false');
+  });
+
+  // ---- 周辺情報 ----
+  var NEARBY = [
+    { t: '足湯', place: '温泉街の足湯（足湯あんべ湯 など）', q: 'あつみ温泉 足湯あんべ湯', memo: '宿から歩いて行けます。行くなら明るいうちに（日の入り16時半ごろ）', warn: '冬季の利用時間' }
+  ];
+  document.getElementById('nearbylist').innerHTML = NEARBY.map(itemHtml).join('');
+  var HOTEL = [
+    { nomap: true, t: 'お風呂', place: '庭園露天風呂「{桜里の湯|さくらのゆ}」1階', memo: '源泉かけ流し。2023年12月リニューアル。貸切不可' },
+    { nomap: true, t: 'お風呂', place: '大浴場「{楽山|らくざん}」「{楽水|らくすい}」3階', memo: '時間帯で男女入れ替え。サウナあり', warn: '入浴時間（目安 5:00〜10:00、11:30〜24:00）' },
+    { nomap: true, t: '食事', place: '和ダイニング「{芙蓉|ふよう}」', memo: '夕食 18:00〜、朝食 7:30〜。名物は朝食の鯛茶漬け', warn: '会場と時刻（プランで個室の場合あり）' },
+    { nomap: true, t: '売店', place: '売店「華籠」（はなかご or けこ）ロビー', memo: '温泉まんじゅう、山形の特産品、民芸品。宿オリジナルの「鯛みそ」「鯛そぼろ」も', warn: '営業時間（目安 朝〜11:00ごろ、15:00〜21:00）' },
+    { nomap: true, t: '喫茶', place: 'ロビーのラウンジ', memo: 'コーヒーやドリンクを無料・セルフで。口コミでは24時間使えるとのこと', warn: '喫茶・バーは営業していない可能性あり' }
+  ];
+  document.getElementById('hotellist').innerHTML = HOTEL.map(itemHtml).join('');
+
+  // ---- メモ ----
+  var MEMO_DEFAULT = { address: '〒999-7204 山形県鶴岡市湯温海丁1（萬国屋）', tel: '0235-43-3333' };
+  var memo = load('memo', {});
+  Object.keys(MEMO_DEFAULT).forEach(function (k) { if (memo[k] === undefined) memo[k] = MEMO_DEFAULT[k]; });
+  var savedEl = document.getElementById('saved');
+  var callEl = document.getElementById('m-tel-call');
+  var timer;
+  function updateCall() {
+    var tel = (memo.tel || '').replace(/[^0-9+]/g, '');
+    if (tel) { callEl.href = 'tel:' + tel; callEl.setAttribute('aria-disabled', 'false'); }
+    else { callEl.href = '#'; callEl.setAttribute('aria-disabled', 'true'); }
+  }
+  [['m-address', 'address'], ['m-tel', 'tel'], ['m-reserve', 'reserve'], ['m-free', 'free']].forEach(function (p) {
+    var el = document.getElementById(p[0]);
+    el.value = memo[p[1]] || '';
+    el.addEventListener('input', function () {
+      memo[p[1]] = el.value;
+      var ok = save('memo', memo);
+      if (p[1] === 'tel') updateCall();
+      clearTimeout(timer);
+      savedEl.textContent = ok ? '保存しました' : 'この端末では保存できませんでした';
+      timer = setTimeout(function () { savedEl.textContent = ''; }, 1500);
+    });
+  });
+  updateCall();
+
+  // ---- 下部ナビ ----
+  var navBtns = document.querySelectorAll('nav.bottom button');
+  navBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      navBtns.forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      if (b.dataset.day) renderDay(Number(b.dataset.day));
+      document.querySelectorAll('section.view').forEach(function (s) { s.classList.toggle('active', s.id === b.dataset.view); });
+      window.scrollTo(0, 0);
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
