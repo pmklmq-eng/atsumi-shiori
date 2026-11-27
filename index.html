@@ -80,6 +80,12 @@
     display: inline-block; background: var(--warn-bg); color: var(--warn-text);
     border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
   }
+  .weather { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px; margin: -4px 0 12px; }
+  .weather .wx { display: grid; grid-template-columns: 5.5em 1fr; gap: 0 8px; padding: 6px 0; line-height: 1.5; }
+  .weather .wx + .wx { border-top: 1px solid var(--line); }
+  .weather .wx b { min-width: 5.5em; }
+  .weather .wx span { display: block; color: var(--sub); font-size: 15px; }
+  .weather small { display: block; color: var(--sub); font-size: 14px; padding-top: 2px; }
   .routebtn {
     display: block; min-height: 56px; padding: 10px 16px; margin: -4px 0 16px; border-radius: 12px;
     background: var(--theme); color: #fff; text-decoration: none;
@@ -140,6 +146,7 @@
   <!-- 行程 -->
   <section class="view active" id="view-plan">
     <h2 id="dayhead"></h2>
+    <div class="weather" id="weather"></div>
     <a class="routebtn" id="routebtn" target="_blank" rel="noopener"></a>
     <ol class="timeline" id="timeline"></ol>
     <div id="dayinfo" style="margin-top:16px"></div>
@@ -295,12 +302,72 @@
   document.getElementById('sushilist').innerHTML = SUSHI.map(itemHtml).join('');
 
   var headEl = document.getElementById('dayhead');
+
+  // ---- 天気（Open-Meteo の予報。スマホが開いたときに取りに行く） ----
+  var WX_POINTS = [
+    { name: '西川町', lat: 38.43, lon: 140.15 },
+    { name: '月山道路', lat: 38.50, lon: 139.99 },
+    { name: 'あつみ温泉', lat: 38.62, lon: 139.60 }
+  ];
+  var wx = load('wx', null);
+  var wxState = 'loading';
+  function wxLabel(c) {
+    if (c === 0) return '☀️ 晴れ';
+    if (c <= 2) return '🌤 晴れ時々くもり';
+    if (c === 3) return '☁️ くもり';
+    if (c === 45 || c === 48) return '🌫 霧';
+    if (c >= 51 && c <= 67) return '🌧 雨';
+    if (c >= 71 && c <= 77) return '❄️ 雪';
+    if (c >= 80 && c <= 82) return '🌦 にわか雨';
+    if (c === 85 || c === 86) return '🌨 にわか雪';
+    if (c >= 95) return '⛈ 雷雨';
+    return '—';
+  }
+  function renderWx(i) {
+    var el = document.getElementById('weather');
+    var date = DAYS[i].date;
+    var rows = [];
+    if (wx && wx.data) {
+      WX_POINTS.forEach(function (pt, k) {
+        var d = wx.data[k] && wx.data[k].daily; if (!d) return;
+        var j = d.time.indexOf(date); if (j < 0) return;
+        var line = wxLabel(d.weather_code[j]) + '　' + Math.round(d.temperature_2m_min[j]) + '〜' + Math.round(d.temperature_2m_max[j]) + '℃';
+        var extra = [];
+        if (d.precipitation_probability_max[j] != null) extra.push('降水' + d.precipitation_probability_max[j] + '%');
+        if (d.snowfall_sum[j] > 0) extra.push('雪' + Math.round(d.snowfall_sum[j]) + 'cm');
+        rows.push('<div class="wx"><b>' + esc(pt.name) + '</b><div>' + esc(line) + (extra.length ? '<span>' + esc(extra.join('・')) + '</span>' : '') + '</div></div>');
+      });
+    }
+    var foot;
+    if (rows.length) {
+      var t = new Date(wx.at);
+      foot = '天気予報（' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + String(t.getMinutes()).padStart(2, '0') + ' 時点）。当日の朝にもう一度確認を';
+    } else if (wxState === 'loading') {
+      foot = '天気予報を読み込み中…';
+    } else {
+      foot = '天気予報は、旅行日が近づくと表示されます（ネットにつながっているとき）';
+    }
+    el.innerHTML = '<div style="font-weight:700">天気</div>' + rows.join('') + '<small>' + esc(foot) + '</small>';
+  }
+  function fetchWx() {
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + WX_POINTS.map(function (p) { return p.lat; }).join(',') +
+      '&longitude=' + WX_POINTS.map(function (p) { return p.lon; }).join(',') +
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,snowfall_sum' +
+      '&timezone=Asia%2FTokyo&start_date=' + DAYS[0].date + '&end_date=' + DAYS[DAYS.length - 1].date;
+    fetch(url).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && !j.error) { wx = { at: Date.now(), data: Array.isArray(j) ? j : [j] }; save('wx', wx); }
+      wxState = 'done'; renderWx(curDay);
+    }).catch(function () { wxState = 'done'; renderWx(curDay); });
+  }
+  var curDay = 0;
   var tlEl = document.getElementById('timeline');
   var infoEl = document.getElementById('dayinfo');
 
   function renderDay(i) {
     var d = DAYS[i];
+    curDay = i;
     headEl.textContent = (i + 1) + '日目　' + d.sub;
+    renderWx(i);
     var rb = document.getElementById('routebtn');
     rb.href = routeUrl(d.route);
     rb.innerHTML = '<span>Google マップで道順を開く ↗</span><small>' + esc((d.route.origin ? '萬国屋' : '現在地') + ' → ' + (i === 0 ? '出羽屋 → 道の駅 月山 → 萬国屋' : 'しゃりん → 道の駅 月山 → にしかわ → 江南春（目印）')) + '</small><small>経路オプションで「高速道路を使わない」をオンに</small>';
@@ -320,6 +387,7 @@
   var startIdx = 0;
   DAYS.forEach(function (d, i) { if (d.date === today) startIdx = i; });
   renderDay(startIdx);
+  fetchWx();
   document.querySelectorAll('nav.bottom button').forEach(function (x) {
     x.setAttribute('aria-selected', x.dataset.day === String(startIdx) ? 'true' : 'false');
   });
