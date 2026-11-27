@@ -163,9 +163,6 @@
     <h2 style="margin-top:24px">2日目のお昼</h2>
     <p class="note">第一候補は早磯。休みなら帰り道の予備へ。</p>
     <ol class="timeline lunchlist" id="lunchlist2"></ol>
-    <h2 style="margin-top:24px">2日目 お寿司・海鮮にするなら（鶴岡）</h2>
-    <p class="note">しゃりんを11:00ごろ出て、鶴岡で11:45〜12:45ごろ。</p>
-    <ol class="timeline lunchlist" id="sushilist"></ol>
   </section>
 
   <!-- 宿 -->
@@ -297,12 +294,6 @@
   ];
   document.getElementById('lunchlist').innerHTML = LUNCH.map(itemHtml).join('');
   document.getElementById('lunchlist2').innerHTML = LUNCH2.map(itemHtml).join('');
-  var SUSHI = [
-    { t: '海鮮・寿司', place: 'はまゆり（鶴岡市美原町）', q: 'はまゆり 鶴岡市美原町', memo: '庄内浜直送の地魚と寿司。名物はよくばり丼（海鮮丼＋刺身＋握り）1,680円。昼11:45〜14:00（ラストオーダー13:30）。水・木曜休み。電話 0235-64-8351', warn: '帰り道からの寄り道の時間' },
-    { t: '寿司', place: '安兵衛寿し（鶴岡市本町）', q: '安兵衛寿し 鶴岡', memo: '昼11:30〜14:00（ラストオーダー13:30）。丼・御膳 950〜2,200円。水曜休み。電話 0235-24-5806' },
-    { t: '回転寿司', place: '金太郎寿し 新斎店', q: '金太郎寿し 新斎店 鶴岡', memo: 'ネタが大きいと評判。平日の昼11:00〜14:00。ほぼ無休。電話 0235-25-4441' }
-  ];
-  document.getElementById('sushilist').innerHTML = SUSHI.map(itemHtml).join('');
 
   var headEl = document.getElementById('dayhead');
   // 月山道路の公式ライブカメラ（通る順に並べる）
