@@ -77,6 +77,7 @@
     border-radius: 0; padding: 4px 0 4px 14px; margin: 0 0 10px 6px; color: var(--sub);
   }
   .timeline li.move .cam { display: flex; align-items: center; min-height: 44px; font-weight: 700; text-decoration: none; }
+  .camimg { display: block; width: 100%; max-width: 480px; border-radius: 10px; border: 1px solid var(--line); margin: 2px 0 8px; background: var(--card); }
   .tag-warn {
     display: inline-block; background: var(--warn-bg); color: var(--warn-text);
     border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
@@ -305,7 +306,7 @@
   var headEl = document.getElementById('dayhead');
   // 月山道路の公式ライブカメラ（通る順に並べる）
   var CAMS = {
-    zuko: { label: '頭光滝沢（志津・公式カメラ）', url: 'https://www2.thr.mlit.go.jp/yamagata/ycam/data/08085.html' },
+    zuko: { label: '頭光滝沢（志津・公式カメラ）', url: 'https://www2.thr.mlit.go.jp/yamagata/ycam/data/08085.html', img: 'https://www2.thr.mlit.go.jp/yamagata/ycam/data/08085-3.jpg' },
     gassan2: { label: '月山第2トンネル（鶴岡側・公式カメラ）', url: 'https://www2.thr.mlit.go.jp/Bumon/J76301/livecam/cctv022.html' }
   };
 
@@ -382,7 +383,10 @@
       if (it.move) {
         return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) +
           (it.cams ? it.cams.map(function (k) {
-            var c = CAMS[k]; return '<a class="cam" href="' + c.url + '" target="_blank" rel="noopener">📷 ' + esc(c.label) + ' ↗</a>';
+            var c = CAMS[k];
+            // 画像があれば最新の写真を表示（10分ごとに新しく読み込む）。読み込めなければリンクだけ残る
+            var pic = c.img ? '<img class="camimg" alt="' + esc(c.label) + 'の最新画像" loading="lazy" src="' + c.img + '?t=' + Math.floor(Date.now() / 600000) + '" onerror="this.remove()">' : '';
+            return '<a class="cam" href="' + c.url + '" target="_blank" rel="noopener">📷 ' + esc(c.label) + ' ↗</a>' + (pic ? '<a href="' + c.url + '" target="_blank" rel="noopener">' + pic + '</a>' : '');
           }).join('') : '') + '</div></li>';
       }
       return itemHtml(it);
