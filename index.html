@@ -337,7 +337,7 @@
     var foot;
     if (rows.length) {
       var t = new Date(wx.at);
-      foot = '天気予報（' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + String(t.getMinutes()).padStart(2, '0') + ' 時点）';
+      foot = (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.getHours() + ':' + String(t.getMinutes()).padStart(2, '0') + ' 時点の予報';
     } else if (wxState === 'loading') {
       foot = '天気予報を読み込み中…';
     } else {
