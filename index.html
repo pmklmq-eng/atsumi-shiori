@@ -76,6 +76,7 @@
     background: transparent; border: none; border-left: 3px dashed var(--line);
     border-radius: 0; padding: 4px 0 4px 14px; margin: 0 0 10px 6px; color: var(--sub);
   }
+  .timeline li.move .cam { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; text-decoration: none; }
   .tag-warn {
     display: inline-block; background: var(--warn-bg); color: var(--warn-text);
     border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
@@ -247,7 +248,7 @@
         { t: '10:10', place: '山形市内 出発' },
         { move: true, t: '', text: '車　国道112号　約60分（冬道 約70分）' },
         { t: '11:30', place: '昼食：出羽屋（西川町間沢）', q: '山菜料理 出羽屋 西川町', memo: '月山山菜そば発祥の店。鉄鍋仕立て1,600円。開店に間に合うよう早めに出発。予約不要。電話 0237-74-2323', warn: '混雑で待ち時間が発生する可能性あり' },
-        { move: true, t: '12:40', text: '車　月山道路（国道112号）　約45分（冬道 約55分）' },
+        { move: true, cam: true, t: '12:40', text: '車　月山道路（国道112号）　約45分（冬道 約55分）' },
         { t: '13:35', place: '休憩：道の駅 月山', q: '道の駅 月山 月山あさひ博物村', memo: '9:00〜17:00', warn: '12月の営業（冬季閉鎖の案内と、第4月曜だけ休みの情報あり）' },
         { move: true, t: '13:50', text: '車　国道112号→鶴岡→国道7号（海沿い）　約60分（冬道 約75分）' },
         { t: '15:05', place: '萬国屋 チェックイン', q: '萬国屋 あつみ温泉', memo: 'チェックイン15:00〜。写真付き身分証が必要な場合あり' },
@@ -266,7 +267,7 @@
         { t: '11:30', place: '昼食：早磯（しゃりん内）', q: '道の駅あつみ しゃりん 早磯', memo: '地魚・海鮮の食堂。電話 0235-44-3211。休みならグルメの予備へ' },
         { move: true, t: '12:30', text: '車　国道7号→鶴岡→国道112号　約65分（冬道 約80分）' },
         { t: '13:50', place: '休憩：道の駅 月山', q: '道の駅 月山 月山あさひ博物村', memo: '9:00〜17:00', warn: '12月の営業（冬季閉鎖の案内と、第4月曜だけ休みの情報あり）' },
-        { move: true, t: '14:05', text: '車　月山道路（国道112号）　約40分（冬道 約50分）' },
+        { move: true, cam: true, t: '14:05', text: '車　月山道路（国道112号）　約40分（冬道 約50分）' },
         { t: '14:55', place: '休憩：道の駅にしかわ', q: '道の駅にしかわ 月山銘水館', memo: '9:00〜17:00' },
         { move: true, t: '15:10', text: '車　国道112号　約50分（冬道 約60分）' },
         { t: '16:10', place: '山形市内 到着', memo: 'おつかれさまでした' }
@@ -376,7 +377,8 @@
     infoEl.innerHTML = d.note ? '<p class="note">' + esc(d.note) + '</p>' : '';
     tlEl.innerHTML = d.items.map(function (it) {
       if (it.move) {
-        return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) + '</div></li>';
+        return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) +
+          (it.cam ? '<a class="cam" href="https://livecam.asia/kokudou/kokudou112/" target="_blank" rel="noopener">📷 月山道路のライブカメラ ↗</a>' : '') + '</div></li>';
       }
       return itemHtml(it);
     }).join('');
