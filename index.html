@@ -305,8 +305,10 @@
 
   // ---- 天気（Open-Meteo の予報。スマホが開いたときに取りに行く） ----
   var WX_POINTS = [
+    { name: '山形市', lat: 38.26, lon: 140.34 },
     { name: '西川町', lat: 38.43, lon: 140.15 },
     { name: '月山道路', lat: 38.50, lon: 139.99 },
+    { name: '鶴岡市', lat: 38.73, lon: 139.83 },
     { name: 'あつみ温泉', lat: 38.62, lon: 139.60 }
   ];
   var wx = load('wx', null);
@@ -327,7 +329,7 @@
     var el = document.getElementById('weather');
     var date = DAYS[i].date;
     var rows = [];
-    if (wx && wx.data) {
+    if (wx && wx.data && wx.n === WX_POINTS.length) {
       WX_POINTS.forEach(function (pt, k) {
         var d = wx.data[k] && wx.data[k].daily; if (!d) return;
         var j = d.time.indexOf(date); if (j < 0) return;
@@ -355,7 +357,7 @@
       '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,snowfall_sum' +
       '&timezone=Asia%2FTokyo&start_date=' + DAYS[0].date + '&end_date=' + DAYS[DAYS.length - 1].date;
     fetch(url).then(function (r) { return r.json(); }).then(function (j) {
-      if (j && !j.error) { wx = { at: Date.now(), data: Array.isArray(j) ? j : [j] }; save('wx', wx); }
+      if (j && !j.error) { wx = { at: Date.now(), n: WX_POINTS.length, data: Array.isArray(j) ? j : [j] }; save('wx', wx); }
       wxState = 'done'; renderWx(curDay);
     }).catch(function () { wxState = 'done'; renderWx(curDay); });
   }
