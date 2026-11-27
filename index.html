@@ -312,9 +312,7 @@
   // ---- 天気（Open-Meteo の予報。スマホが開いたときに取りに行く） ----
   var WX_POINTS = [
     { name: '山形市', lat: 38.26, lon: 140.34 },
-    { name: '西川町', lat: 38.43, lon: 140.15 },
     { name: '月山道路', lat: 38.50, lon: 139.99 },
-    { name: '鶴岡市', lat: 38.73, lon: 139.83 },
     { name: 'あつみ温泉', lat: 38.62, lon: 139.60 }
   ];
   var wx = load('wx', null);
@@ -385,7 +383,7 @@
         return '<li class="move"><div class="time">' + esc(it.t) + '</div><div class="item">🚗 ' + esc(it.text) +
           (it.cams ? it.cams.map(function (k) {
             var c = CAMS[k]; return '<a class="cam" href="' + c.url + '" target="_blank" rel="noopener">📷 ' + esc(c.label) + ' ↗</a>';
-          }).join('') + '<a class="cam" href="https://livecam.asia/kokudou/kokudou112/" target="_blank" rel="noopener">📷 月山道路のほかのカメラ ↗</a>' : '') + '</div></li>';
+          }).join('') : '') + '</div></li>';
       }
       return itemHtml(it);
     }).join('');
