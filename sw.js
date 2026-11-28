@@ -1,4 +1,4 @@
-const CACHE = 'shiori-atsumi-2026-ippan-v32';
+const CACHE = 'shiori-atsumi-2026-ippan-v33';
 const FILES = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {

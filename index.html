@@ -78,6 +78,7 @@
   }
   .timeline li.move .cam { display: flex; align-items: center; min-height: 44px; font-weight: 700; text-decoration: none; }
   .camimg { display: block; width: 100%; max-width: 480px; border-radius: 10px; border: 1px solid var(--line); margin: 2px 0 8px; background: var(--card); }
+  .camsrc { display: block; font-size: 13px; color: var(--sub); margin: -4px 0 8px; }
   .tag-warn {
     display: inline-block; background: var(--warn-bg); color: var(--warn-text);
     border-radius: 6px; padding: 0 6px; font-size: 15px; font-weight: 700; margin-left: 4px;
@@ -298,8 +299,8 @@
   var headEl = document.getElementById('dayhead');
   // 月山道路の公式ライブカメラ（通る順に並べる）
   var CAMS = {
-    zuko: { label: '頭光滝沢（志津・公式カメラ）', url: 'https://www2.thr.mlit.go.jp/yamagata/ycam/data/08085.html', img: 'https://www2.thr.mlit.go.jp/yamagata/ycam/data/08085-3.jpg' },
-    gassan2: { label: '月山第2トンネル（鶴岡側・公式カメラ）', url: 'https://www2.thr.mlit.go.jp/Bumon/J76301/livecam/cctv022.html', img: 'https://www2.thr.mlit.go.jp/Bumon/J76301/livecam/cctv022.jpg' }
+    zuko: { label: '頭光滝沢（志津・公式カメラ）', url: 'https://www2.thr.mlit.go.jp/yamagata/ycam/data/08085.html', img: 'https://www2.thr.mlit.go.jp/yamagata/ycam/data/08085-3.jpg', src: '国土交通省 山形河川国道事務所' },
+    gassan2: { label: '月山第2トンネル（鶴岡側・公式カメラ）', url: 'https://www2.thr.mlit.go.jp/Bumon/J76301/livecam/cctv022.html', img: 'https://www2.thr.mlit.go.jp/Bumon/J76301/livecam/cctv022.jpg', src: '国土交通省 酒田河川国道事務所' }
   };
 
   // ---- 天気（Open-Meteo の予報。スマホが開いたときに取りに行く） ----
@@ -377,8 +378,8 @@
           (it.cams ? it.cams.map(function (k) {
             var c = CAMS[k];
             // 画像があれば最新の写真を表示（10分ごとに新しく読み込む）。読み込めなければリンクだけ残る
-            var pic = c.img ? '<img class="camimg" alt="' + esc(c.label) + 'の最新画像" loading="lazy" src="' + c.img + '?t=' + Math.floor(Date.now() / 600000) + '" onerror="this.remove()">' : '';
-            return '<a class="cam" href="' + c.url + '" target="_blank" rel="noopener">📷 ' + esc(c.label) + ' ↗</a>' + (pic ? '<a href="' + c.url + '" target="_blank" rel="noopener">' + pic + '</a>' : '');
+            var pic = c.img ? '<img class="camimg" alt="' + esc(c.label) + 'の最新画像" loading="lazy" src="' + c.img + '?t=' + Math.floor(Date.now() / 600000) + '" onerror="this.parentNode.nextSibling && this.parentNode.nextSibling.remove(); this.remove()">' : '';
+            return '<a class="cam" href="' + c.url + '" target="_blank" rel="noopener">📷 ' + esc(c.label) + ' ↗</a>' + (pic ? '<a href="' + c.url + '" target="_blank" rel="noopener">' + pic + '</a><small class="camsrc">画像：' + esc(c.src) + '</small>' : '');
           }).join('') : '') + '</div></li>';
       }
       return itemHtml(it);
